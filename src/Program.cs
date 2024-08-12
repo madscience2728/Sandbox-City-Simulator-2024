@@ -7,10 +7,31 @@ class Program
     {
         Print.Clear();
         Print.ConsoleResetColor();
-        
-        // Set the window to a standard size
-        //Console.SetWindowSize(120, 45);
-        
+
+        for (int i = 0; i < 100; i++)
+        {
+            Console.WriteLine(Stats.GuassianBetween01());
+            
+            /*Stats stats = new Stats();
+            Print.Line($"Health: {stats.RollHealth()}");
+            Print.Line($"Intelligence: {stats.RollIntelligence()}");
+            Print.Line($"Luck: {stats.RollLuck()}");
+            Print.Line($"Addiction Prepensity: {stats.RollAddictionPrepensity()}");
+            Print.Line($"Empathy: {stats.RollEmpathy()}");
+            Print.Line($"Survival Odds: {stats.RollSurvivalOdds()}");
+            Print.Line($"Charisma: {stats.RollCharisma()}");
+            Print.Line($"Strength: {stats.RollStrength()}");
+            Print.Line($"Mental Health: {stats.RollMentalHealth()}");
+            Print.Line($"Energy: {stats.RollEnergy()}");
+            Print.Line($"Happiness: {stats.RollHappiness()}");
+            Print.Line();
+            Print.Line();
+            Print.Line();*/
+        }
+
+
+
+
         while (true)
         {
             await new Game().Play();

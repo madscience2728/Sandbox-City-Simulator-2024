@@ -5,6 +5,14 @@ public class Stats
 {
     static readonly Random random = new Random();
 
+    public static float GuassianBetween01()
+    {
+        float u1 = random.NextSingle();
+        float u2 = random.NextSingle();
+        float z0 = MathF.Sqrt(-2.0f * MathF.Log(u1)) * MathF.Cos(2.0f * MathF.PI * u2);
+        return z0;
+    }
+
     // Base internal stats that make up the rest of the stats
     public float Health { get; set; } = random.NextSingle();
     public float Intelligence { get; set; } = random.NextSingle();
@@ -28,13 +36,13 @@ public class Stats
     public bool RollLuck() => random.NextSingle() < Luck;
 
     public bool RollAddictionPrepensity() => random.NextSingle() < DetermineAddictionPrepensity();
-    public float DetermineAddictionPrepensity() => (1f - Health) * AddictionPrepensity;
+    public float DetermineAddictionPrepensity() => (1f - Health) * AddictionPrepensity * Luck * Intelligence;
 
     public bool RollEmpathy() => random.NextSingle() < DetermineEmpathy();
     public float DetermineEmpathy() => (1f - Addiction) * Empathy;
 
     public bool RollSurvivalOdds() => random.NextSingle() < DetermineSurvivalOdds();
-    public float DetermineSurvivalOdds() => Health * ((Intelligence + Luck) / 2f);
+    public float DetermineSurvivalOdds() =>  ((Health + Intelligence + Luck) / 3f);
 
     public bool RollCharisma() => random.NextSingle() < DetermineCharisma();
     public float DetermineCharisma() => Health * Math.Max(1f, ((Intelligence + Luck) / 2f) + SocialFulfillment);
