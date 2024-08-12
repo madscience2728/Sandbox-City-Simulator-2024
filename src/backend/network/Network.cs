@@ -6,11 +6,7 @@ namespace Network.Core;
 
 public class Network
 {
-    const int hour = 60;
-    const int day = 24 * hour;
-    const int month = 30 * day;  // More accurate month calculation assuming 30 days in a month
-    const int year = 12 * month;
-    const int timeless = 1_000 * year;
+    
 
     private static ConcurrentDictionary<string, Node> nodes = new();
     private static ConcurrentDictionary<string, List<string>> links = new();
@@ -51,8 +47,8 @@ public class Network
         Console.ResetColor();
         await Task.CompletedTask;
 
-        int printTimeRate = 60;
         
+
         new Thread(async () =>
         {
             while (isRunning)
@@ -64,47 +60,35 @@ public class Network
                 await Step();
                 //<<
 
-                int tickDivHour = tick / hour;
-                int tickDivDay = tick / day;
-                int tickModHour = tick % hour;
-                int tickModDay = tick % day;
+                
+                const int hour = 60;
+                const int day = 24 * hour;
+                const int timeless = 1_000 * 365 * 24 * 60;
+                const int printTimeRate = hour;
+                
+                int currentHour = tick / hour;
+                int currentDay = tick / day;
+                int hourOfTheDay = tick % day;
                 string age = string.Empty;
-
-                switch (tick)
+                
+                string AddS(int value, string s) => value == 1 ? $"{value} {s}" : $"{value} {s}s";
+                
+                age = tick switch
                 {
-                    case 0:
-                        break;
+                    0 => string.Empty,
                     
-                    case var t when t == hour:
-                        age = "1 hour old";
-                        break;
-
-                    case var t when t < day:
-                        if (tickModHour == 0)
-                            age = $"{tickDivHour} hour{(tickDivHour == 1 ? "" : "s")} old";
-                        else
-                            age = $"{tickDivHour} hour{(tickDivHour == 1 ? "" : "s")} old and {tickModHour} minute{(tickModHour == 1 ? "" : "s")}";
-                        break;
-
-                    case var t when t == day:
-                        age = "1 day old";
-                        break;
-
-                    case var t when t < month:
-                        int tickModDayDivHour = tickModDay / hour;
-                        if (tickModDayDivHour == 0)
-                            age = $"{tickDivDay} day{(tickDivDay == 1 ? "" : "s")} old";
-                        else
-                            age = $"{tickDivDay} day{(tickDivDay == 1 ? "" : "s")} old and {tickModDayDivHour} hour{(tickModDayDivHour == 1 ? "" : "s")}";
-                        break;
-
-                    default:
-                        age = "Timeless";
-                        break;
-                }
-
-                //Print.Cache($"{networkName} is {age}");
-
+                    hour => "1 hour old",
+                    
+                    < day => $"{AddS(currentHour, "hour")} old",
+                    
+                    day => "1 day old",
+                    
+                    < timeless when hourOfTheDay is 0 => $"{AddS(currentDay, "day")} old",
+                    
+                    < timeless => $"{AddS(currentDay, "day")} and {AddS(hourOfTheDay, "hour")}",
+                    
+                    _ => "Timeless"
+                };
                 if (tick % printTimeRate == 0f && age != string.Empty) Print.Cache($"{networkName} is {age}");
 
                 //>>
