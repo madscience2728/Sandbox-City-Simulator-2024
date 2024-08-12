@@ -13,9 +13,11 @@ public static class Print
         public ConsoleColor color;
     }
 
-#pragma warning disable IDE0052 // Remove unread private members
+#if !DEBUG
+#pragma warning disable CS0414
     static bool fastPrint = false;
-#pragma warning restore IDE0052 // Remove unread private members
+#pragma warning restore CS0414
+#endif
 
     public static bool printFlag { get; private set; } = false;    
     static ConcurrentBag<DayPrint> dayMessages = new();
@@ -64,7 +66,12 @@ public static class Print
     }
 
     public static void ClearPrintFlag() => printFlag = false;
-    public static void ResetSkip() => fastPrint = false;
+    public static void ResetSkip()
+    {
+        #if !DEBUG
+        fastPrint = false;
+        #endif
+    }
     
     public static void CollectUpdateInt(string message, ref int currentValue)
     {

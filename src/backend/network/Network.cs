@@ -51,7 +51,7 @@ public class Network
         Console.ResetColor();
         await Task.CompletedTask;
 
-        int printTimeRate = 1;
+        int printTimeRate = 60;
         
         new Thread(async () =>
         {
