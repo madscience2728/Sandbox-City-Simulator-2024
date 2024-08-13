@@ -4,7 +4,12 @@ using Sandbox_City_Simulator_2024.PrintTools;
 
 public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
 {
+    const int MinTimeItTakesToBurnDown = 30; // 60 ticks = 1 minute
+    const int FireDepartmentFireFightTime_Min = 15;
+    const int FireDepartmentFireFightTime_Max = 120;
+    
     public bool OnFire { get; set; }
+    public int timeCaughtOnFire { get; set; }
     public bool Destroyed { get; set; }
     public Chance chanceToCatchFire { get; set; } = new(Chance.OncePer2Minutes); // How long does the risk of fire last
     public Chance chanceToBeDestroyed { get; set; } = new(Chance.OncePerHour); // How long can you last before burning down
@@ -33,6 +38,7 @@ public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
             {
                 Print.Cache($"A fire broke out at {Name}", ConsoleColor.Red);
                 OnFire = true;
+                timeCaughtOnFire = Network.tick;
 
                 var fireStation = Network.GetRandomNode<FireStation>()!;
                 FireRequestPacket fireRequestPacket = new FireRequestPacket
@@ -57,7 +63,10 @@ public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
             Task.Run(async () =>
             {
                 Print.Cache($"The fire department has showed up to {Name}", ConsoleColor.Blue);
-                await Network.WaitForTicks(30, 120);
+                await Network.WaitForTicks(
+                    FireDepartmentFireFightTime_Min, 
+                    FireDepartmentFireFightTime_Max
+                );
                 if (Destroyed) return;
                 Print.Cache($"{Name} has been saved by the fire department", ConsoleColor.Green);
                 OnFire = false;
@@ -70,7 +79,7 @@ public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
     {
         if (Destroyed) return;
 
-        if (chanceToBeDestroyed.Roll())
+        if (chanceToBeDestroyed.Roll() && Network.tick - timeCaughtOnFire > MinTimeItTakesToBurnDown)
         {
             if (OnFire)
             {

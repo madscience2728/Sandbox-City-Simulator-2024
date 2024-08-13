@@ -61,5 +61,7 @@ public class RandomEvents
         ["The risk of fire is afoot...", "...the risk of fire was mitigated. "],
         ["A drug lab just blew up...", "...the drug lab stayed covert. "],
         ["Some DIY wiring is sparking...", "...the sparking wires were discovered and fixed. "],
+        ["Some bad wiring is sparking...", "...the sparking wires were discovered and fixed. "],
+        ["Some old wiring is sparking...", "...the sparking wires were discovered and fixed. "],
     ];
 }
