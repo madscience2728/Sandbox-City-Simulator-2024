@@ -24,6 +24,7 @@ class Program
             Print.Line($"Mental Health: {stats.RollMentalHealth()}");
             Print.Line($"Energy: {stats.RollEnergy()}");
             Print.Line($"Happiness: {stats.RollHappiness()}");
+            Print.Line($"Criminality: {stats.RollCriminality()}");
             Print.Line();
             Print.Line();
             Print.Line();

@@ -42,7 +42,7 @@ public class Stats
     public bool RollLuck() => random.NextSingle() < Luck;
 
     public bool RollAddictionPrepensity() => random.NextSingle() < DetermineAddictionPrepensity();
-    public float DetermineAddictionPrepensity() => (1f - Health) * AddictionPrepensity * Luck * Intelligence;
+    public float DetermineAddictionPrepensity() => (1f - Health) * Math.Min(Math.Min(AddictionPrepensity, Luck), Intelligence);
 
     public bool RollEmpathy() => random.NextSingle() < DetermineEmpathy();
     public float DetermineEmpathy() => (1f - Addiction) * Empathy;
@@ -64,4 +64,7 @@ public class Stats
 
     public bool RollHappiness() => random.NextSingle() < DetermineHappiness();
     public float DetermineHappiness() => Health * (1f - Addiction) * ((Happiness + Energy + SocialFulfillment) / 3f);
+
+    public bool RollCriminality() => random.NextSingle() < DetermineCriminality();
+    public float DetermineCriminality() => (1f - ((Empathy + Intelligence) /2f)) * Math.Max(Criminality, Luck);
 }
