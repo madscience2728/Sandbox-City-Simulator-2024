@@ -12,12 +12,14 @@ public class Game
 
     public static int TimeInMinutes = 0;
     public static int NumPeople = 20000;
+    public static int PersonVariability = 10;
     public static int NumNodes = 2500;
     public static int NumRoads = 100;
     public static int NumHighways = 5;
     public static int NumHouses = 4000;
     public static int NumAppartments = 100;
     public static int NumFireStations = 5;
+    
 
     public int cachedReady = 0;
     string cityName = "City";

@@ -5,27 +5,33 @@ public class Stats
 {
     static readonly Random random = new Random();
 
-    public static float GuassianBetween01()
+    public static float GaussianBetween01(float sigma)
     {
+        float mean = 0.5f; // Centered at 0.5 to keep the values within [0, 1]
         float u1 = random.NextSingle();
         float u2 = random.NextSingle();
         float z0 = MathF.Sqrt(-2.0f * MathF.Log(u1)) * MathF.Cos(2.0f * MathF.PI * u2);
-        return z0;
-    }
+        float value = mean + sigma * z0;
 
+        // Clamp the result between 0 and 1 to keep within bounds
+        value = MathF.Max(0, MathF.Min(1, value));
+
+        return value;
+    }
+    
     // Base internal stats that make up the rest of the stats
-    public float Health { get; set; } = random.NextSingle();
-    public float Intelligence { get; set; } = random.NextSingle();
-    float Luck { get; set; } = random.NextSingle();
-    float AddictionPrepensity { get; set; } = random.NextSingle();
-    public float Addiction { get; set; } = random.NextSingle();
-    float Empathy { get; set; } = random.NextSingle();
-    public float Energy { get; set; } = random.NextSingle();
-    public float Hunger { get; set; } = random.NextSingle();
-    float Happiness { get; set; } = random.NextSingle();
-    float Criminality { get; set; } = random.NextSingle();
-    float Agression { get; set; } = random.NextSingle();
-    public float SocialFulfillment { get; set; } = random.NextSingle();
+    public float Health { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    public float Intelligence { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    float Luck { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    float AddictionPrepensity { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    public float Addiction { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    float Empathy { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    public float Energy { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    public float Hunger { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    float Happiness { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    float Criminality { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    float Agression { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    public float SocialFulfillment { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
 
     public bool RollHealth() => random.NextSingle() < DetermineHealth();
     public float DetermineHealth() => Health * Happiness;

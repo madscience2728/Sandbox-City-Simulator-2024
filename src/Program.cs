@@ -10,9 +10,9 @@ class Program
 
         for (int i = 0; i < 100; i++)
         {
-            Console.WriteLine(Stats.GuassianBetween01());
             
-            /*Stats stats = new Stats();
+            
+            Stats stats = new Stats();
             Print.Line($"Health: {stats.RollHealth()}");
             Print.Line($"Intelligence: {stats.RollIntelligence()}");
             Print.Line($"Luck: {stats.RollLuck()}");
@@ -26,7 +26,7 @@ class Program
             Print.Line($"Happiness: {stats.RollHappiness()}");
             Print.Line();
             Print.Line();
-            Print.Line();*/
+            Print.Line();
         }
 
 
