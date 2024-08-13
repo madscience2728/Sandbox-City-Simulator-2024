@@ -16,9 +16,18 @@ public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
 
     protected override void YouveGotMail(Packet packet)
     {
-        if (Destroyed) return;
+        if(Destroyed && OnFire && packet is FireResponsePacket)
+        {
+            Print.Cache($"The fire department has showed up to {Name}, but it's too late.", ConsoleColor.Blue);
+            OnFire = false;
+            return;
+        }
         
-        if (!OnFire && packet is FirePacket)
+        //>>
+        if (Destroyed) return;
+        //<<
+        
+        if (!OnFire && packet is FirePacket firePacket)
         {
             if (chanceToCatchFire.Roll())
             {
@@ -37,6 +46,11 @@ public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
                 };
                 Network.Send(fireRequestPacket);
             }
+            else
+            {
+                Print.Cache($"{RandomEvents.potentialFireCauses[firePacket.causeIndex][1]}", ConsoleColor.Green);
+                
+            }
         }
         else if (OnFire && packet is FireResponsePacket)
         {
@@ -47,6 +61,7 @@ public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
                 if (Destroyed) return;
                 Print.Cache($"{Name} has been saved by the fire department", ConsoleColor.Green);
                 OnFire = false;
+                
             });
         }
     }

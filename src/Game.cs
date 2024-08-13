@@ -24,7 +24,7 @@ public class Game
     public int cachedReady = 0;
     string cityName = "City";
 
-    MotherNature? motherNature;
+    RandomEvents? randomEvents;
 
     public async Task Play()
     {
@@ -150,7 +150,7 @@ public class Game
         Print.Line();
 
         // Mother Nature
-        motherNature = new MotherNature();
+        randomEvents = new RandomEvents();
 
         // Generate apartments        
 

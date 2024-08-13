@@ -6,8 +6,6 @@ namespace Network.Core;
 
 public class Network
 {
-    
-
     private static ConcurrentDictionary<string, Node> nodes = new();
     private static ConcurrentDictionary<string, List<string>> links = new();
 
@@ -68,7 +66,7 @@ public class Network
                 
                 int currentHour = tick / hour;
                 int currentDay = tick / day;
-                int hourOfTheDay = tick % day;
+                int hourOfTheDay = (tick % day) / hour;
                 string age = string.Empty;
                 
                 string AddS(int value, string s) => value == 1 ? $"{value} {s}" : $"{value} {s}s";
