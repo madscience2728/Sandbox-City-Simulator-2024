@@ -102,4 +102,9 @@ public class AbstractBuilding : AbstractGameHost, IAmOnFire, IAmDestroyable
     {
         people.Add(person);
     }
+    
+    public override IEnumerable<T> ReportPackets<T>()
+    {
+        return people.OfType<T>();
+    }
 }

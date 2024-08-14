@@ -1,3 +1,4 @@
+
 namespace Network.Core;
 
 public class Host : Node
@@ -54,5 +55,10 @@ public class Host : Node
     public Router GetRouter()
     {
         return (Router) Network.GetNode(DefaultGateway);
+    }
+
+    public override IEnumerable<T> ReportPackets<T>()
+    {
+        return Array.Empty<T>();
     }
 }

@@ -122,4 +122,9 @@ public class Router : Node
         }
         return updated;
     }
+
+    public override IEnumerable<T> ReportPackets<T>()
+    {
+        return Array.Empty<T>();
+    }
 }

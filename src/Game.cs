@@ -101,6 +101,7 @@ public class Game
                         Print.Line("View stats of the residents");
                         await Task.Delay(1000);
                         Print.Clear();
+                        ShowResidents();
                         break;
                     case 4:
                         Print.Clear();
@@ -118,6 +119,11 @@ public class Game
                 }
             }
         }
+    }
+
+    private void ShowResidents()
+    {
+        Packet[] allPeople = Network.GetPackets<Person>().ToArray();
     }
 
     public static string GetTime() => GetTime(TimeInMinutes);

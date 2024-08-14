@@ -461,5 +461,14 @@ public class Network
         }
     }
 
-
+    internal static IEnumerable<T> GetPackets<T>() where T : Packet
+    {
+        foreach (var node in nodes.Values)
+        {
+            foreach (var packet in node.GetPackets<T>())
+            {
+                yield return packet;
+            }
+        }
+    }
 }
