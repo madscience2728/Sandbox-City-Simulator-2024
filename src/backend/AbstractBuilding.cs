@@ -14,6 +14,8 @@ public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
     public Chance chanceToCatchFire { get; set; } = new(Chance.OncePer2Minutes); // How long does the risk of fire last
     public Chance chanceToBeDestroyed { get; set; } = new(Chance.OncePerHour); // How long can you last before burning down
 
+    protected List<Person> people = new List<Person>();
+
     public AbstractBuilding(string name, string gateway) : base(name, gateway)
     {
 

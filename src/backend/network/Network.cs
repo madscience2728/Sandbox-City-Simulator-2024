@@ -57,37 +57,36 @@ public class Network
                 //>>
                 await Step();
                 //<<
-
                 
-const int hour = 60;
-const int day = 24 * hour;
-const int timeless = 1_000 * 365 * 24 * 60;
-const int printTimeRate = hour;
+                const int hour = 60;
+                const int day = 24 * hour;
+                const int timeless = 1_000 * 365 * 24 * 60;
+                const int printTimeRate = hour;
+                
+                int currentHour = tick / hour;
+                int currentDay = tick / day;
+                int hourOfTheDay = (tick % day) / hour;
+                string age = string.Empty;
 
-int currentHour = tick / hour;
-int currentDay = tick / day;
-int hourOfTheDay = (tick % day) / hour;
-string age = string.Empty;
-
-string AddS(int value, string s) => value == 1 ? $"{value} {s}" : $"{value} {s}s";
-
-age = tick switch
-{
-    0 => string.Empty,
-    
-    hour => "1 hour old",
-    
-    < day => $"{AddS(currentHour, "hour")} old",
-    
-    day => "1 day old",
-    
-    < timeless when hourOfTheDay is 0 => $"{AddS(currentDay, "day")} old",
-    
-    < timeless => $"{AddS(currentDay, "day")} and {AddS(hourOfTheDay, "hour")}",
-    
-    _ => "Timeless"
-};
-if (tick % printTimeRate == 0f && age != string.Empty) Print.Cache($"{networkName} is {age}");
+                string AddS(int value, string s) => value == 1 ? $"{value} {s}" : $"{value} {s}s";
+                
+                age = tick switch
+                {
+                    0 => string.Empty,
+                    
+                    hour => "1 hour old",
+                    
+                    < day => $"{AddS(currentHour, "hour")} old",
+                    
+                    day => "1 day old",
+                    
+                    < timeless when hourOfTheDay is 0 => $"{AddS(currentDay, "day")} old",
+                    
+                    < timeless => $"{AddS(currentDay, "day")} and {AddS(hourOfTheDay, "hour")}",
+                    
+                    _ => "Timeless"
+                };
+                if (tick % printTimeRate == 0f && age != string.Empty) Print.Cache($"{networkName} is {age}");
 
                 //>>
                 PostStep();

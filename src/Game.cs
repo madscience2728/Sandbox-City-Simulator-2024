@@ -262,6 +262,12 @@ public class Game
             }
         }
     }
+    
+    public Person GeneratePerson()
+    {
+        Person person = new Person();
+        return person;
+    }
 }
 
 

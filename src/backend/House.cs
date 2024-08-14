@@ -4,7 +4,7 @@ using Network.Core;
 using Sandbox_City_Simulator_2024.PrintTools;
 
 public class House : AbstractBuilding
-{
+{    
     public House() : base("No Name", "No Gateway")
     {
         
@@ -17,26 +17,22 @@ public class House : AbstractBuilding
     
     bool welcomeMessage = false;
 
+    protected override void YouveGotMail(Packet packet)
+    {
+        base.YouveGotMail(packet);
+        if(packet == null) return;
+        
+        if(packet is Person person)
+        {
+            people.Add(person);
+        }
+    }
+
     public override void Step()
     {
         base.Step();
 
         if (welcomeMessage) return;
         welcomeMessage = true;
-
-        //>> Generate a packet
-        Packet packet = new Packet
-        {
-            Name = "Sexy Test Packet",
-            Source = Name,
-            Destination = Network.GetRandomNode()!.Name,
-            LastHop = Name,
-            NextHop = DefaultGateway,
-            //traceRoute = true
-        };
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        //Print.Line($"House {Name} sending packet to {packet.Destination}");
-        Console.ResetColor();
-        egressPackets.Add(packet);
     }
 }

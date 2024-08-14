@@ -2,11 +2,11 @@ namespace Sandbox_City_Simulator_2024;
 
 using Network.Core;
 
-public class Creature : AbstractGameHost
+public abstract class AbstractCreature : Packet
 {
     Stats stats;  
 
-    public Creature(string name, string defaultGateway, Stats stats) : base(name, defaultGateway)
+    public AbstractCreature(string name, Stats stats)
     {
         Name = name;
         this.stats = stats;
