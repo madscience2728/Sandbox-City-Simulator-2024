@@ -2,13 +2,15 @@ namespace Sandbox_City_Simulator_2024;
 
 using Network.Core;
 
-public abstract class AbstractCreature : Packet
+public abstract class AbstractCreature : Packet, IHasHome
 {
-    Stats stats;  
+    public string Home { get; set; }
+    Stats stats;
 
-    public AbstractCreature(string name, Stats stats)
+    public AbstractCreature(string name, string home, Stats stats)
     {
         Name = name;
+        Home = home;
         this.stats = stats;
     }
 }

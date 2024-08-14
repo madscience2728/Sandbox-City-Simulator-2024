@@ -19,10 +19,13 @@ public class Network
     public static int millisecondsPerTick { get; private set; } = 0;
 
     private static Action PostStep = () => { };
+    
+    private static int pauseQueued = 0;
+    private static int paused = 0;
 
     //| START / STEP
 
-    public static async Task Start(string networkName, int _millisecondsPerTick = 100)
+    public static async Task Start(string networkName, int _millisecondsPerTick = 10)
     {
         millisecondsPerTick = _millisecondsPerTick;
         Console.ForegroundColor = ConsoleColor.Yellow;
@@ -86,23 +89,41 @@ public class Network
                     
                     _ => "Timeless"
                 };
-                if (tick % printTimeRate == 0f && age != string.Empty) Print.Cache($"{networkName} is {age}");
-
+                if (tick % printTimeRate == 0f && age != string.Empty) Print.Cache($"{networkName} is {age}. Last tick {stopwatch.ElapsedMilliseconds}ms");
+                
                 //>>
                 PostStep();
                 //<<
 
-                stopwatch.Stop();
-
-                int sleepTime = Math.Clamp(
-                    millisecondsPerTick - (int)stopwatch.ElapsedMilliseconds,
-                    0,
-                    millisecondsPerTick
-                );
-                Thread.Sleep(sleepTime);
+                if (pauseQueued == 1)
+                {
+                    Interlocked.Exchange(ref paused, 1);
+                    pauseQueued = 0;
+                    while (paused == 1) await Task.Delay(1);
+                }
+                else // Stabilize timing
+                {
+                    int sleepTime = Math.Clamp(
+                        millisecondsPerTick - (int)stopwatch.ElapsedMilliseconds,
+                        0,
+                        millisecondsPerTick
+                    );
+                    Thread.Sleep(sleepTime);
+                }
                 tick++;
             }
         }).Start();
+    }
+    
+    public static async Task Pause()
+    {
+        Interlocked.Exchange(ref pauseQueued, 1);
+        while (paused == 0) await Task.Delay(millisecondsPerTick);
+    }
+    
+    public static void Resume()
+    {
+        Interlocked.Exchange(ref paused, 0);
     }
 
     public static void AddListener(Action action)

@@ -2,7 +2,7 @@ namespace Sandbox_City_Simulator_2024;
 using Network.Core;
 using Sandbox_City_Simulator_2024.PrintTools;
 
-public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
+public class AbstractBuilding : AbstractGameHost, IAmOnFire, IAmDestroyable
 {
     const int MinTimeItTakesToBurnDown = 30; // 60 ticks = 1 minute
     const int FireDepartmentFireFightTime_Min = 15;
@@ -96,5 +96,10 @@ public class AbstractBuilding : AbstractGameHost, IOnFire, IDestroyable
     public void OnDestruction()
     {
         Destroyed = true;
+    }
+    
+    public void AddPerson(Person person)
+    {
+        people.Add(person);
     }
 }

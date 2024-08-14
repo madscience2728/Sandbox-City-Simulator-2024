@@ -19,11 +19,12 @@ public class Game
     public static int NumHouses = 4000;
     public static int NumAppartments = 100;
     public static int NumFireStations = 5;
-    
+
 
     public int cachedReady = 0;
     string cityName = "City";
 
+    public Random random = new Random();
     RandomEvents? randomEvents;
 
     public async Task Play()
@@ -47,7 +48,7 @@ public class Game
             Print.CollectUpdateInt("How many fire stations are in your city?", ref NumFireStations);
         }
 #endif
-        
+
         // Setup Network
         Network.AddListener(() =>
         {
@@ -62,7 +63,59 @@ public class Game
             if (cachedReady == 1)
             {
                 Print.PrintCache();
-                if(cachedReady == 1) Interlocked.Exchange(ref cachedReady, 0);
+                if (cachedReady == 1) Interlocked.Exchange(ref cachedReady, 0);
+            }
+            // Else if the console reads athe return/enter key
+            else if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Enter)
+            {
+                Print.Line("Network is pausing...");
+                await Network.Pause();
+                Print.Line("Network is paused.");
+                await Task.Delay(1000);
+                Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.White;
+                Print.Line("Welcom to the pause menu, what would you like to do?");
+                Print.Line("1. View city network in map");
+                Print.Line("2. View stats of the city");
+                Print.Line("3. View stats of the residents");
+                Print.Line("4. View stats of the network");
+                Print.Line("X. Any other key to resume the simulation");
+                int choice = Print.CollectInt("Enter your choice: ");
+                switch (choice)
+                {
+                    case 1:
+                        Print.Clear();
+                        Print.Line("View city network in map");
+                        await Task.Delay(1000);
+                        Print.Clear();
+                        break;
+                    case 2:
+                        Print.Clear();
+                        Print.Line("View stats of the city");
+                        await Task.Delay(1000);
+                        Print.Clear();
+                        break;
+                    case 3:
+                        Print.Clear();
+                        Print.Line("View stats of the residents");
+                        await Task.Delay(1000);
+                        Print.Clear();
+                        break;
+                    case 4:
+                        Print.Clear();
+                        Print.Line("View stats of the network");
+                        await Task.Delay(1000);
+                        Print.Clear();
+                        break;
+                    default:
+                        Print.Clear();
+                        Print.Line("Resuming the simulation...");
+                        await Task.Delay(1000);
+                        Print.Clear();
+                        Network.Resume();
+                        break;
+                }
             }
         }
     }
@@ -140,8 +193,11 @@ public class Game
         stopwatch.Stop();
         Print.Line($"Generated {NumHouses} houses in {stopwatch.ElapsedMilliseconds}ms");
         Print.Line();
+        
+        //>> Fill houses with people
+        FillHousesWithPeople();
 
-        // Generate fire stations
+        //>> Generate fire stations
         Print.Meta("Generating fire stations...");
         stopwatch.Restart();
         Sprinkle<FireStation>(roadsGenerated, NumFireStations, "Fire Station");
@@ -149,7 +205,7 @@ public class Game
         Print.Line($"Generated {NumFireStations} fire stations in {stopwatch.ElapsedMilliseconds}ms");
         Print.Line();
 
-        // Mother Nature
+        //>> Mother Nature
         randomEvents = new RandomEvents();
 
         // Generate apartments        
@@ -184,7 +240,7 @@ public class Game
 
         // Generate hotels
     }
-    
+
     public void Sprinkle<T>(List<Road> roadsGenerated, int numberOfItems, string nameType) where T : AbstractGameHost, new()
     {
         int numRoads = roadsGenerated.Count;
@@ -203,7 +259,7 @@ public class Game
             for (int j = 0; j < numHousesOnRoad; j++)
             {
                 string name = nameType;
-                if(name != string.Empty) name = " " + nameType;
+                if (name != string.Empty) name = " " + nameType;
                 T t = new()
                 {
                     Name = $"{j + 1}{GetSuffix(j + 1)} {road.Name}{name}",
@@ -262,11 +318,19 @@ public class Game
             }
         }
     }
-    
-    public Person GeneratePerson()
+
+    public void FillHousesWithPeople()
     {
-        Person person = new Person();
-        return person;
+        // Network.GetNodes<T> returns an IEnumerbale
+        House[] houses = Network.GetNodes<House>().ToArray();
+        int avgNumPeopleInHouse = NumPeople / NumHouses;
+        for(int i = 0; i < NumPeople; i++)
+        {
+            int numPeopleInHouse = random.Next(1, avgNumPeopleInHouse * 2);
+            House house = houses[random.Next(houses.Length)];
+            Person person = new Person(house.Name, NameGenerator.GenerateName());
+            house.AddPerson(person);
+        }
     }
 }
 

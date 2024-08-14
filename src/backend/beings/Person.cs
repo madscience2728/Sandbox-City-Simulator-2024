@@ -3,25 +3,23 @@ using Network.Core;
 
 public class Person : AbstractCreature
 {
-    public Person() : base(NameGenerator.GenerateName(), new Stats())
+    public Person(string home) : base(NameGenerator.GenerateName(), home, new Stats())
     {
         
     }
     
-    public Person(string name) : base(name, new Stats())
+    public Person(string home, string name) : base(name, home, new Stats())
     {
         
     }
     
-    public Person(Stats stats) : base(NameGenerator.GenerateName(), stats)
+    public Person(string home, Stats stats) : base(NameGenerator.GenerateName(), home, stats)
     {
         
     }
     
-    public Person(string name, Stats stats) : base(name, stats)
+    public Person(string home, string name, Stats stats) : base(name, home, stats)
     {
         
     }
-    
-    
 }

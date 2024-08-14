@@ -22,15 +22,15 @@ public class Stats
     // Base internal stats that make up the rest of the stats
     public float Health { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
     public float Intelligence { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-    float Luck { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-    float AddictionPrepensity { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    protected float Luck { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    protected float AddictionPrepensity { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
     public float Addiction { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-    float Empathy { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    protected float Empathy { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
     public float Energy { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
     public float Hunger { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-    float Happiness { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-    float Criminality { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-    float Agression { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    protected float Happiness { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    protected float Criminality { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+    protected float Agression { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
     public float SocialFulfillment { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
 
     public bool RollHealth() => random.NextSingle() < DetermineHealth();
