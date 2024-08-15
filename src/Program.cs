@@ -1,5 +1,5 @@
-﻿namespace Sandbox_City_Simulator_2024;
-using Sandbox_City_Simulator_2024.PrintTools;
+﻿namespace Sandbox_Simulator_2024;
+using Sandbox_Simulator_2024.PrintTools;
 
 class Program
 {

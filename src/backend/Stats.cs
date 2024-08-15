@@ -1,4 +1,4 @@
-namespace Sandbox_City_Simulator_2024;
+namespace Sandbox_Simulator_2024;
 
 // Applicapable to any creature entity in the game
 public class Stats

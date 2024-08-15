@@ -1,4 +1,4 @@
-namespace Sandbox_City_Simulator_2024.PrintTools;
+namespace Sandbox_Simulator_2024.PrintTools;
 
 using System.Collections.Concurrent;
 using Network.Core;

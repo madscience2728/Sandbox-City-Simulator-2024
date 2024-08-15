@@ -1,6 +1,6 @@
-namespace Sandbox_City_Simulator_2024;
+namespace Sandbox_Simulator_2024;
 
-using Sandbox_City_Simulator_2024.PrintTools;
+using Sandbox_Simulator_2024.PrintTools;
 
 public static class GameText
 {
