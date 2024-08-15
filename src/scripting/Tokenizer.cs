@@ -3,7 +3,7 @@ namespace Sandbox_Simulator_2024.Scripting;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-public class Tokenizer
+public static class Tokenizer
 {
     private static readonly Dictionary<string, Token.TokenType> keywords = new Dictionary<string, Token.TokenType>
         {
@@ -50,6 +50,8 @@ public class Tokenizer
             { "for", Token.TokenType.Keyword },
             { "bool", Token.TokenType.Keyword },
             { "int", Token.TokenType.Keyword },
+            { "Name", Token.TokenType.Keyword },
+            { "Roll", Token.TokenType.Keyword },
             { "to", Token.TokenType.Ignored },
             { "of", Token.TokenType.Ignored },
             { "type", Token.TokenType.Ignored },
@@ -72,7 +74,7 @@ public class Tokenizer
     private static readonly Regex operatorRegex = new Regex(@"^[=+\-*/]");
     private static readonly Regex specialCharRegex = new Regex(@"^[\(\)\{\},]");
 
-    public List<Token> Tokenize(string input)
+    public static List<Token> Tokenize(string input)
     {
         var tokens = new List<Token>();
         int index = 0;
