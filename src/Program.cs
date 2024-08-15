@@ -1,6 +1,7 @@
 ﻿namespace Sandbox_Simulator_2024;
 using Sandbox_Simulator_2024.PrintTools;
 using Sandbox_Simulator_2024.Scripting;
+using Network.Core; 
 
 class Program
 {
@@ -32,10 +33,11 @@ class Program
         }*/
         
         Print.Line("Welcome to Sandbox Simulator 2024");
-        
-        ScriptInterpreter interpreter = new ScriptInterpreter(FireStationExampleScript.draft);
-        await Task.Delay(-1);
 
+        await Network.Start("Test Net");
+        ScriptInterpreter interpreter = new ScriptInterpreter(FireStationExampleScript.draft);
+        
+        await Task.Delay(-1);
         while (true)
         {
             Print.Clear();

@@ -67,17 +67,16 @@ Building interfaces ICanBeDestroyed
 # Setup interface actions
 Building.OnCatchFire        += print red "{Building.Name} is on fire"
 Building.OnCatchFire        += Building.IsOnFire = true
-Building.OnCatchFire        += from 
 Building.OnExtinguishFire   += print green "{Building.Name} is no longer on fire"
 Building.OnDestroy          += if IsOnFire then print red "Fire has consumed {Building.Name}"
 Building.OnDestroy          += print red "{Building.Name} is destroyed"
 Building.OnDestroy          += Building.IsOnFire = false
-
+                            
 # Setup host actions
-Building.OnReceivePacket += if packet is FirePacket and not Building.IsOnFire and Building.CatchOnFire.Roll then Building.IsOnFire = true and Building.OnCatchFire
-Building.OnReceivePacket += if packet is FireTruck and FireTruck.RollToExtinguishFire then Building.IsOnFire = false and Building.OnExtinguishFire and print green "{Building.Name} has been saved by the fire department"
-Building.OnStep += if Building.IsOnFire and people > 0 and not Stats.RollSurvivalOdds then from people take random person and print red "{person.Name} has died in the fire"
-Building.OnStep += if Building.IsOnFire and Building.BeDestroyed.Roll then Building.OnDestroy
+Building.OnReceivePacket    += if packet is FirePacket and not Building.IsOnFire and Building.CatchOnFire.Roll then Building.IsOnFire = true and Building.OnCatchFire
+Building.OnReceivePacket    += if packet is FireTruck and FireTruck.RollToExtinguishFire then Building.IsOnFire = false and Building.OnExtinguishFire and print green "{Building.Name} has been saved by the fire department"
+Building.OnStep             += if Building.IsOnFire and people > 0 then from people take random person and print red "{person.Name} has died in the {Building.Name} fire"
+Building.OnStep             += if Building.IsOnFire and Building.BeDestroyed.Roll then Building.OnDestroy
 
 
 
@@ -106,7 +105,7 @@ ResidentialRoads = create hubAndSpoke of type Road on CollectorRoads with 2 to 6
 AllRoads includes ResidentialRoads
 
 # Highways
-Highways = create connections of type Road on CollectorRoads of with 10 to 50 children
+Highways = create connections of type Road on CollectorRoads with 10 to 50 children
 AllRoads includes Highways
 
 

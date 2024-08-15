@@ -13,7 +13,8 @@ namespace Sandbox_Simulator_2024.Scripting
             Whitespace,
             NewLine,
             SpecialCharacter,
-            Unknown
+            Unknown,
+            Ignored
         }
 
         public string Value { get; set; }

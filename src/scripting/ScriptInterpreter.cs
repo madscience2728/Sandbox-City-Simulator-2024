@@ -20,7 +20,7 @@ public class ScriptInterpreter
                     Console.BackgroundColor = ConsoleColor.Black;
                     break;
                 case Token.TokenType.Operator:
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = ConsoleColor.Black;
                     break;
                 case Token.TokenType.Literal:
@@ -37,11 +37,11 @@ public class ScriptInterpreter
                     break;
                 case Token.TokenType.Whitespace:
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.BackgroundColor = ConsoleColor.Black;
                     break;
                 case Token.TokenType.NewLine:
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.BackgroundColor = ConsoleColor.Black;
                     break;
                 case Token.TokenType.SpecialCharacter:
                     Console.ForegroundColor = ConsoleColor.Cyan;
@@ -49,6 +49,11 @@ public class ScriptInterpreter
                     break;
                 case Token.TokenType.Unknown:
                     Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    break;
+                    
+                case Token.TokenType.Ignored:
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.BackgroundColor = ConsoleColor.Black;
                     break;
             }
