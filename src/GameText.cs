@@ -23,4 +23,9 @@ public static class GameText
     {
         return $"{NameGenerator.GenerateName()} {RoadNameSuffixes[random.Next(0, RoadNameSuffixes.Length)]}";
     }
+    
+    public static string GetName()
+    {
+        return NameGenerator.GenerateName();
+    }
 }
