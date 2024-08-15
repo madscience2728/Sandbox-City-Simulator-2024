@@ -1,5 +1,6 @@
 ﻿namespace Sandbox_Simulator_2024;
 using Sandbox_Simulator_2024.PrintTools;
+using Sandbox_Simulator_2024.Scripting;
 
 class Program
 {
@@ -8,7 +9,7 @@ class Program
         Print.Clear();
         Print.ConsoleResetColor();
 
-        for (int i = 0; i < 100; i++)
+        /*for (int i = 0; i < 100; i++)
         {
             
             
@@ -28,14 +29,15 @@ class Program
             Print.Line();
             Print.Line();
             Print.Line();
-        }
-
-
-
+        }*/
+        
+        Print.Line("Welcome to Sandbox Simulator 2024");
+        
+        ScriptInterpreter interpreter = new ScriptInterpreter(FireStationExampleScript.draft);
+        await Task.Delay(-1);
 
         while (true)
         {
-            await new Game().Play();
             Print.Clear();
             Print.Pause("play again");
         }

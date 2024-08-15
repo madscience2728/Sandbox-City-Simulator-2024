@@ -1,4 +1,9 @@
-string draft = """
+namespace Sandbox_Simulator_2024.Scripting;
+
+
+public class FireStationExampleScript
+{
+    public static string draft = """
 ### FIRE STATION EXAMPLE SCRIPT ###
 
 
@@ -114,5 +119,6 @@ define Houses
 define AllPeople
 
 Houses = create many of type House on ResidentialRoads with 2500 children
-AllPeople = create many of type Person in Houses.people with 10000 children
+AllPeople = create many of type Person for Houses.people with 10000 children
 """;
+}

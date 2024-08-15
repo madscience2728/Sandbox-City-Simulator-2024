@@ -1,27 +1,34 @@
+namespace Network.Core;
+
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using Sandbox_City_Simulator_2024.PrintTools;
-
-namespace Network.Core;
+using System.Reflection;
+using Sandbox_Simulator_2024.PrintTools;
 
 public class Network
 {
+    //
+    //
+    // NOTE: We use reflections to reset the network, so all bools float and ints will be default values, hence the defualt usage as a reminder
+    //
+    //
+    
     private static ConcurrentDictionary<string, Node> nodes = new();
     private static ConcurrentDictionary<string, List<string>> links = new();
 
-    public static bool isRunning { get; private set; } = false;
-    public static bool debugText = false;
+    public static bool isRunning { get; private set; } = default;
+    public static bool debugText = default;
 
-    public static int numPacketsSent { get; private set; } = 0;
-    public static int numPacketsDelivered { get; private set; } = 0;
+    public static int numPacketsSent { get; private set; } = default;
+    public static int numPacketsDelivered { get; private set; } = default;
 
-    public static int tick { get; private set; } = 0;
-    public static int millisecondsPerTick { get; private set; } = 0;
+    public static int tick { get; private set; } = default;
+    public static int millisecondsPerTick { get; private set; } = default;
 
     private static Action PostStep = () => { };
     
-    private static int pauseQueued = 0;
-    private static int paused = 0;
+    private static int pauseQueued = default;
+    private static int paused = default;
 
     //| START / STEP
 
@@ -154,6 +161,31 @@ public class Network
             if (counter >= nodes.Count) break; // Max possible updates, assumes a chain of routers
         } while (updated == 1);
         Console.WriteLine($"Routing tables updated in {counter} broadcasts and took {stopwatch.ElapsedMilliseconds / 1000f:F3} seconds\n");
+    }
+    
+    public async Task Reset(bool removePostStepListeners)
+    {
+        await Pause();
+        Console.WriteLine("Resetting network...");
+    
+        // USe reflection to clear all static data to it's default state
+        FieldInfo[] fields = typeof(Network).GetFields(BindingFlags.Static);
+        foreach (FieldInfo field in fields)
+        {
+            if (field.FieldType == typeof(int)) field.SetValue(null, 0);
+            else if(field.FieldType == typeof(float)) field.SetValue(null, 0f);
+            else if (field.FieldType == typeof(bool)) field.SetValue(null, false);
+        }
+        
+        // Clear the nodes and links
+        nodes.Clear();
+        links.Clear();
+        
+        // Remove the post step listeners
+        if (removePostStepListeners) PostStep = () => { };
+        
+        await Task.Delay(1000);
+        Console.WriteLine("Network reset");
     }
 
     public static void StepSerial()

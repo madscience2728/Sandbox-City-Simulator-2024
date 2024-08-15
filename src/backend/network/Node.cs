@@ -1,6 +1,6 @@
 
 using System.Collections.Concurrent;
-using Sandbox_City_Simulator_2024.PrintTools;
+using Sandbox_Simulator_2024.PrintTools;
 
 namespace Network.Core;
 
