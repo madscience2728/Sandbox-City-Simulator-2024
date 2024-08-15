@@ -18,6 +18,7 @@ public class Tokenizer
             { "not", Token.TokenType.Keyword },
             { "random", Token.TokenType.Keyword },
             { "action", Token.TokenType.Keyword },
+            { "includes", Token.TokenType.Keyword },
             { "interface", Token.TokenType.Keyword },
             { "list", Token.TokenType.Keyword },
             { "router", Token.TokenType.Keyword },
@@ -36,16 +37,30 @@ public class Tokenizer
             { "packet", Token.TokenType.Keyword},
             { "create", Token.TokenType.Keyword },
             { "many", Token.TokenType.Keyword },
-            { "of", Token.TokenType.Ignored },
-            { "type", Token.TokenType.Ignored },
-            { "with", Token.TokenType.Keyword },
             { "true", Token.TokenType.Keyword },
             { "false", Token.TokenType.Keyword },
-            { "%", Token.TokenType.Ignored }, // Add other keywords here
-            { "on", Token.TokenType.Ignored },
             { "from", Token.TokenType.Keyword },
             { ">", Token.TokenType.Keyword },
             { "<", Token.TokenType.Keyword },
+            { "send", Token.TokenType.Keyword },
+            { "hubAndSpoke", Token.TokenType.Keyword },
+            { "roll", Token.TokenType.Keyword },
+            { "tree", Token.TokenType.Keyword },
+            { "connections", Token.TokenType.Keyword },
+            { "for", Token.TokenType.Keyword },
+            { "bool", Token.TokenType.Keyword },
+            { "int", Token.TokenType.Keyword },
+            { "to", Token.TokenType.Ignored },
+            { "of", Token.TokenType.Ignored },
+            { "type", Token.TokenType.Ignored },
+            { "%", Token.TokenType.Ignored },
+            { "on", Token.TokenType.Ignored },            
+            { "chance", Token.TokenType.Ignored },
+            { "children", Token.TokenType.Ignored },
+            { "that", Token.TokenType.Ignored },
+            { "an", Token.TokenType.Ignored },
+            { "with", Token.TokenType.Ignored },
+            
             
             // Add other keywords here
         };
@@ -80,19 +95,27 @@ public class Tokenizer
 
             string remainingInput = input.Substring(index);
 
+            // Match keywords properly without splitting prematurely
+            bool keywordMatched = false;
+            foreach (var keyword in keywords.Keys)
+            {
+                if (remainingInput.StartsWith(keyword) &&
+                    (remainingInput.Length == keyword.Length || !char.IsLetterOrDigit(remainingInput[keyword.Length])))
+                {
+                    tokens.Add(new Token(keyword, keywords[keyword]));
+                    index += keyword.Length;
+                    keywordMatched = true;
+                    break;
+                }
+            }
+
+            if (keywordMatched) continue;
+
             if (commentRegex.IsMatch(remainingInput))
             {
                 string comment = commentRegex.Match(remainingInput).Value;
                 tokens.Add(new Token(comment, Token.TokenType.Comment));
                 index += comment.Length;
-                continue;
-            }
-
-            if (keywords.TryGetValue(remainingInput.Split(' ')[0], out var keywordType))
-            {
-                string keyword = remainingInput.Split(' ')[0];
-                tokens.Add(new Token(keyword, keywordType));
-                index += keyword.Length;
                 continue;
             }
 
@@ -142,4 +165,5 @@ public class Tokenizer
 
         return tokens;
     }
+
 }

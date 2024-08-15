@@ -15,9 +15,9 @@ public class FireStationExampleScript
 # Top-level
 define Road is router
 define Building is host
-define ICatchOnFire is interface has bool IsOnFire, random CatchOnFire, action OnCatchFire, action OnExtinguishFire
-define ICanBeDestroyed is interface has bool IsDestroyed, action BeDestroyed, action OnDestroy
 define MotherNature is host
+define ICatchOnFire is an interface that has bool IsOnFire, random CatchOnFire, action OnCatchFire, action OnExtinguishFire
+define ICanBeDestroyed is an interface that has bool IsDestroyed, action BeDestroyed, action OnDestroy
 
 # Derived
 define House is Building
@@ -114,8 +114,8 @@ AllRoads includes Highways
 
 ### Setup houses ###
 
-define Houses
-define AllPeople
+define Houses is list
+define AllPeople is list
 
 Houses = create many of type House on ResidentialRoads with 2500 children
 AllPeople = create many of type Person for Houses.people with 10000 children
