@@ -18,3 +18,8 @@ public interface IHasHome
 {
     string Home { get; set; }
 }
+
+public interface IHasStats
+{
+    Stats stats { get; set; }
+}

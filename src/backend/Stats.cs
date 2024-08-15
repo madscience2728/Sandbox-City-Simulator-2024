@@ -67,4 +67,9 @@ public class Stats
 
     public bool RollCriminality() => random.NextSingle() < DetermineCriminality();
     public float DetermineCriminality() => (1f - ((Empathy + Intelligence) /2f)) * Math.Max(Criminality, Luck);
+
+    public bool RollAgression() => random.NextSingle() < DetermineAgression();
+    public float DetermineAgression() => (1f - Empathy) * Agression;
+    
+    // Static method to use reflection to get all stats and average them, given a list of IHasStats
 }

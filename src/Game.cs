@@ -124,6 +124,10 @@ public class Game
     private void ShowResidents()
     {
         Packet[] allPeople = Network.GetPackets<Person>().ToArray();
+        int numPeople = allPeople.Length;
+        int numPeoplePerHouse = numPeople / NumHouses;
+        
+        
     }
 
     public static string GetTime() => GetTime(TimeInMinutes);
