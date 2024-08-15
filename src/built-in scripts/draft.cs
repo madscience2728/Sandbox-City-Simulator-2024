@@ -27,7 +27,7 @@ define Person is packet
 define FirePacket is packet
 define Fire911 is packet
 define FireTruck is packet
-FireTruck has new random 3% RollToExtinguishFire
+FireTruck has new random 3% ExtinguishFire
 
 
 
@@ -74,7 +74,7 @@ Building.OnDestroy          += Building.IsOnFire = false
                             
 # Setup host actions
 Building.OnReceivePacket    += if packet is FirePacket and not Building.IsOnFire and Building.CatchOnFire.Roll then Building.IsOnFire = true and Building.OnCatchFire
-Building.OnReceivePacket    += if packet is FireTruck and FireTruck.RollToExtinguishFire then Building.IsOnFire = false and Building.OnExtinguishFire and print green "{Building.Name} has been saved by the fire department"
+Building.OnReceivePacket    += if packet is FireTruck and FireTruck.ExtinguishFire then Building.IsOnFire = false and Building.OnExtinguishFire and print green "{Building.Name} has been saved by the fire department"
 Building.OnStep             += if Building.IsOnFire and people > 0 then from people take random person and print red "{person.Name} has died in the {Building.Name} fire"
 Building.OnStep             += if Building.IsOnFire and Building.BeDestroyed.Roll then Building.OnDestroy
 

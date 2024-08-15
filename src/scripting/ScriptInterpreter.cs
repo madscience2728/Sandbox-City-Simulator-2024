@@ -3,8 +3,13 @@ namespace Sandbox_Simulator_2024.Scripting;
 public class ScriptInterpreter
 {
     Tokenizer tokenizer = new Tokenizer();
-    
+
     public ScriptInterpreter(string script)
+    {
+        PrintTokenized(script);
+    }
+
+    public void PrintTokenized(string script)
     {
         List<Token> tokens = tokenizer.Tokenize(script);
         foreach (Token token in tokens)
