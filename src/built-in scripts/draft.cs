@@ -114,5 +114,5 @@ define Houses
 define AllPeople
 
 Houses = create many of type House on ResidentialRoads with 2500 children
-AllPeople = for Houses.people do AddPeople
+AllPeople = create many of type Person in Houses.people with 10000 children
 """;
