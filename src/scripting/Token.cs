@@ -12,18 +12,20 @@ namespace Sandbox_Simulator_2024.Scripting
             Comment,
             Whitespace,
             NewLine,
-            SpecialCharacter,
+            Delimiter,
             Unknown,
             Ignored
         }
 
         public string Value { get; set; }
         public TokenType Type { get; set; }
+        public int SourceLineNumber { get; set; }
 
-        public Token(string value, TokenType type)
+        public Token(string value, TokenType type, int lineNumber)
         {
             Value = value;
             Type = type;
+            SourceLineNumber = lineNumber;
         }
     }
 }

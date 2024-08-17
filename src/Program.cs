@@ -8,6 +8,17 @@ class Program
     async static Task Main(string[] args)
     {
         Print.Clear();
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Print.Immediate("Sandbox Simulator 2024");
         Print.ConsoleResetColor();
 
         /*for (int i = 0; i < 100; i++)
@@ -34,9 +45,9 @@ class Program
         
         Print.Line("Welcome to Sandbox Simulator 2024");
 
-        await Network.Start("Test Net");
         ScriptInterpreter interpreter = new ScriptInterpreter(FireStationExampleScript.draft);
-        
+        //await Network.Start("Test Net");
+
         await Task.Delay(-1);
         while (true)
         {

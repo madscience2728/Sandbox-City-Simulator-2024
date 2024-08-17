@@ -7,6 +7,11 @@ public static class Tokenizer
 {
     private static readonly Dictionary<string, Token.TokenType> keywords = new Dictionary<string, Token.TokenType>
         {
+            // Delimiters
+            { ".", Token.TokenType.Delimiter },
+            //
+            //
+            // Keywords
             { "define", Token.TokenType.Keyword },
             { "is", Token.TokenType.Keyword },
             { "has", Token.TokenType.Keyword },
@@ -32,8 +37,8 @@ public static class Tokenizer
             { "magenta", Token.TokenType.Keyword },
             { "white", Token.TokenType.Keyword },
             { "black", Token.TokenType.Keyword },
-            { "OnStep", Token.TokenType.Keyword },
-            { "OnReceivePacket", Token.TokenType.Keyword },
+            { "onStep", Token.TokenType.Keyword },
+            { "onReceivePacket", Token.TokenType.Keyword },
             { "packet", Token.TokenType.Keyword},
             { "create", Token.TokenType.Keyword },
             { "many", Token.TokenType.Keyword },
@@ -44,14 +49,21 @@ public static class Tokenizer
             { "<", Token.TokenType.Keyword },
             { "send", Token.TokenType.Keyword },
             { "hubAndSpoke", Token.TokenType.Keyword },
-            { "roll", Token.TokenType.Keyword },
             { "tree", Token.TokenType.Keyword },
             { "connections", Token.TokenType.Keyword },
             { "for", Token.TokenType.Keyword },
             { "bool", Token.TokenType.Keyword },
             { "int", Token.TokenType.Keyword },
-            { "Name", Token.TokenType.Keyword },
-            { "Roll", Token.TokenType.Keyword },
+            { "string", Token.TokenType.Keyword },
+            { "name", Token.TokenType.Keyword },
+            { "roll", Token.TokenType.Keyword },
+            { "set", Token.TokenType.Keyword },
+            { ",", Token.TokenType.Keyword },
+            { "implements", Token.TokenType.Keyword },
+            { ":", Token.TokenType.Keyword },
+            //
+            //
+            // Ignored
             { "to", Token.TokenType.Ignored },
             { "of", Token.TokenType.Ignored },
             { "type", Token.TokenType.Ignored },
@@ -61,6 +73,7 @@ public static class Tokenizer
             { "children", Token.TokenType.Ignored },
             { "that", Token.TokenType.Ignored },
             { "an", Token.TokenType.Ignored },
+            { "a", Token.TokenType.Ignored },
             { "with", Token.TokenType.Ignored },
             
             
@@ -72,24 +85,25 @@ public static class Tokenizer
     private static readonly Regex stringRegex = new Regex("^\"[^\"]*\"");
     private static readonly Regex commentRegex = new Regex(@"^#.*");
     private static readonly Regex operatorRegex = new Regex(@"^[=+\-*/]");
-    private static readonly Regex specialCharRegex = new Regex(@"^[\(\)\{\},]");
 
     public static List<Token> Tokenize(string input)
     {
         var tokens = new List<Token>();
         int index = 0;
-
+        int sourceLineNumber = 0;
+        
         while (index < input.Length)
         {
             if (char.IsWhiteSpace(input[index]))
             {
                 if (input[index] == '\n')
                 {
-                    tokens.Add(new Token("\n", Token.TokenType.NewLine));
+                    tokens.Add(new Token("\n", Token.TokenType.NewLine, sourceLineNumber));
+                    sourceLineNumber++;
                 }
                 else
                 {
-                    tokens.Add(new Token(input[index].ToString(), Token.TokenType.Whitespace));
+                    tokens.Add(new Token(input[index].ToString(), Token.TokenType.Whitespace, sourceLineNumber));
                 }
                 index++;
                 continue;
@@ -104,7 +118,7 @@ public static class Tokenizer
                 if (remainingInput.StartsWith(keyword) &&
                     (remainingInput.Length == keyword.Length || !char.IsLetterOrDigit(remainingInput[keyword.Length])))
                 {
-                    tokens.Add(new Token(keyword, keywords[keyword]));
+                    tokens.Add(new Token(keyword, keywords[keyword], sourceLineNumber));
                     index += keyword.Length;
                     keywordMatched = true;
                     break;
@@ -116,7 +130,7 @@ public static class Tokenizer
             if (commentRegex.IsMatch(remainingInput))
             {
                 string comment = commentRegex.Match(remainingInput).Value;
-                tokens.Add(new Token(comment, Token.TokenType.Comment));
+                tokens.Add(new Token(comment, Token.TokenType.Comment, sourceLineNumber));
                 index += comment.Length;
                 continue;
             }
@@ -124,7 +138,7 @@ public static class Tokenizer
             if (identifierRegex.IsMatch(remainingInput))
             {
                 string identifier = identifierRegex.Match(remainingInput).Value;
-                tokens.Add(new Token(identifier, Token.TokenType.Identifier));
+                tokens.Add(new Token(identifier, Token.TokenType.Identifier, sourceLineNumber));
                 index += identifier.Length;
                 continue;
             }
@@ -132,7 +146,7 @@ public static class Tokenizer
             if (numberRegex.IsMatch(remainingInput))
             {
                 string number = numberRegex.Match(remainingInput).Value;
-                tokens.Add(new Token(number, Token.TokenType.Literal));
+                tokens.Add(new Token(number, Token.TokenType.Literal, sourceLineNumber));
                 index += number.Length;
                 continue;
             }
@@ -140,7 +154,7 @@ public static class Tokenizer
             if (stringRegex.IsMatch(remainingInput))
             {
                 string str = stringRegex.Match(remainingInput).Value;
-                tokens.Add(new Token(str, Token.TokenType.String));
+                tokens.Add(new Token(str, Token.TokenType.String, sourceLineNumber));
                 index += str.Length;
                 continue;
             }
@@ -148,20 +162,12 @@ public static class Tokenizer
             if (operatorRegex.IsMatch(remainingInput))
             {
                 string op = operatorRegex.Match(remainingInput).Value;
-                tokens.Add(new Token(op, Token.TokenType.Operator));
+                tokens.Add(new Token(op, Token.TokenType.Operator, sourceLineNumber));
                 index += op.Length;
                 continue;
             }
 
-            if (specialCharRegex.IsMatch(remainingInput))
-            {
-                string specialChar = specialCharRegex.Match(remainingInput).Value;
-                tokens.Add(new Token(specialChar, Token.TokenType.SpecialCharacter));
-                index += specialChar.Length;
-                continue;
-            }
-
-            tokens.Add(new Token(input[index].ToString(), Token.TokenType.Unknown));
+            tokens.Add(new Token(input[index].ToString(), Token.TokenType.Unknown, sourceLineNumber));
             index++;
         }
 
