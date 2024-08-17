@@ -25,6 +25,7 @@ public static class Tokenizer
             { "action", Token.TokenType.Keyword },
             { "includes", Token.TokenType.Keyword },
             { "interface", Token.TokenType.Keyword },
+            { "interfaces", Token.TokenType.Keyword },
             { "list", Token.TokenType.Keyword },
             { "router", Token.TokenType.Keyword },
             { "host", Token.TokenType.Keyword },
@@ -61,6 +62,8 @@ public static class Tokenizer
             { ",", Token.TokenType.Keyword },
             { "implements", Token.TokenType.Keyword },
             { ":", Token.TokenType.Keyword },
+            { "call", Token.TokenType.Keyword },
+            { "take", Token.TokenType.Keyword },
             //
             //
             // Ignored
@@ -96,10 +99,17 @@ public static class Tokenizer
         {
             if (char.IsWhiteSpace(input[index]))
             {
-                if (input[index] == '\n')
+                if (input[index] == '\n' || input[index] == '\r')
                 {
                     tokens.Add(new Token("\n", Token.TokenType.NewLine, sourceLineNumber));
                     sourceLineNumber++;
+                }
+                else if (input[index] == '\t')
+                {
+                    tokens.Add(new Token(" ", Token.TokenType.Whitespace, sourceLineNumber));
+                    tokens.Add(new Token(" ", Token.TokenType.Whitespace, sourceLineNumber));
+                    tokens.Add(new Token(" ", Token.TokenType.Whitespace, sourceLineNumber));
+                    tokens.Add(new Token(" ", Token.TokenType.Whitespace, sourceLineNumber));
                 }
                 else
                 {
@@ -127,6 +137,7 @@ public static class Tokenizer
 
             if (keywordMatched) continue;
 
+            // Match comments
             if (commentRegex.IsMatch(remainingInput))
             {
                 string comment = commentRegex.Match(remainingInput).Value;
@@ -135,6 +146,7 @@ public static class Tokenizer
                 continue;
             }
 
+            // Match identifiers
             if (identifierRegex.IsMatch(remainingInput))
             {
                 string identifier = identifierRegex.Match(remainingInput).Value;
@@ -143,6 +155,7 @@ public static class Tokenizer
                 continue;
             }
 
+            // Match numbers
             if (numberRegex.IsMatch(remainingInput))
             {
                 string number = numberRegex.Match(remainingInput).Value;
@@ -151,6 +164,7 @@ public static class Tokenizer
                 continue;
             }
 
+            // Match strings
             if (stringRegex.IsMatch(remainingInput))
             {
                 string str = stringRegex.Match(remainingInput).Value;
@@ -159,6 +173,7 @@ public static class Tokenizer
                 continue;
             }
 
+            // Match operators
             if (operatorRegex.IsMatch(remainingInput))
             {
                 string op = operatorRegex.Match(remainingInput).Value;

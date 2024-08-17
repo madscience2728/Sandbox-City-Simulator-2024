@@ -21,11 +21,21 @@ Building is a host.
 MotherNature is a host.
 Houses is list.
 AllPeople is list.
-ICatchOnFire is an interface that has bool IsOnFire, random CatchOnFire, action OnCatchFire, action OnExtinguishFire.
-ICanBeDestroyed is an interface that has bool IsDestroyed, action BeDestroyed, action OnDestroy.
 
 # Derived
 House is a Building.
+
+# Interfaces
+ICatchOnFire is an interface that has:
+    bool IsOnFire,
+    random CatchOnFire,
+    action OnCatchFire,
+    action OnExtinguishFire.
+ICanBeDestroyed is an interface that has:
+    bool IsDestroyed,
+    action BeDestroyed,
+    action OnDestroy.
+ILikePie is an interface.
 
 # Packets
 Person is a packet.
@@ -50,7 +60,7 @@ Person set name to "{name generator}".
 
 MotherNature set name to "Mother Nature".
 MotherNature has a new random 1% chance to StartFire.
-MotherNature onStep does: if roll MotherNature StartFire then send Fire to random ICatchOnFire.
+MotherNature implements onStep if roll StartFire then send Fire to random ICatchOnFire.
 
 
 
@@ -60,14 +70,14 @@ MotherNature onStep does: if roll MotherNature StartFire then send Fire to rando
 
 # Setup building
 Building set name to "{name generator} building".
-Building:
-    has a new list of people,
+Building has:
+    a new list of people,
     a new random 1% chance to CatchFire,
     a new random 15% chance to BeDestroyed.
 
 # Setup interfaces
-Building interfaces ICatchOnFire
-Building interfaces ICanBeDestroyed
+Building interfaces ICatchOnFire.
+Building interfaces ICanBeDestroyed.
 
 # Setup interface actions
 Building implements OnExtinguishFire:
@@ -84,8 +94,8 @@ Building implements OnDestroy:
 Building implements onReceivePacket:
     if packet is FirePacket and not IsOnFire and roll CatchOnFire then set IsOnFire true and call OnCatchFire,
     if packet is FireTruck and roll FireTruck ExtinguishFire then:
-        Building set IsOnFire false and
-        Building call OnExtinguishFire and
+        Building set IsOnFire false,
+        Building call OnExtinguishFire,
         print green "{name of Building} has been saved by the fire department".
 Building implements onStep:
     if IsOnFire then from people take random person and print red "{name of person} has died in the {name of Building} fire",
@@ -130,6 +140,8 @@ AllRoads includes Highways.
 
 
 Houses is create 2500 House on ResidentialRoads.
-AllPeople is create 10000 Person in people of Houses.
+AllPeople is create 10000 Person.
+# Add people to houses
+# Add firestation
 """;
 }
