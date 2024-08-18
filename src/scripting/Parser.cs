@@ -15,6 +15,10 @@ public class Parser
     List<string> ListIdentifiers = new();
     List<string> IdentifierIdentifiers = new();
 
+    Dictionary<string, List<Node>> lists = new();
+    Dictionary<string, List<ScriptableRouter>> routers = new();
+    Dictionary<string, List<ScriptableHost>> hosts = new();
+
 
     public void Parse(string script)
     {
@@ -22,13 +26,18 @@ public class Parser
         Console.WriteLine("Found " + tokens.Count + " tokens");
 
         // Collect next line by injesting tokens until a delimiter token is found
+        
+        IterateExpressions(tokens, ParseExpression);
+    }
+    
+    public void IterateExpressions(IEnumerable<Token> tokens, Action<List<Token>> Parse)
+    {
         var lineTokens = new List<Token>();
-        Token? lastToken = null;
         foreach (var token in tokens)
         {
             if (token.Type == Token.TokenType.Delimiter)
             {
-                ParseExpression(lineTokens);
+                Parse(lineTokens);
                 lineTokens.Clear();
                 Console.WriteLine();
             }
@@ -52,18 +61,12 @@ public class Parser
             {
                 lineTokens.Add(token);
             }
-
-            lastToken = token;
         }
-        /*foreach (string identifier in identifiers.Keys)
-        {
-            Console.WriteLine($"Found {identifiers[identifier].Count} instances of identifier {identifier}");
-        }*/
     }
 
     public void ParseExpression(IEnumerable<Token> tokens)
     {
-        ValidateExpression(tokens);
+        ValidateAndPrintExpression(tokens);
 
         int Count = tokens.Count();
         if (Count == 3) ParseAs3Tokens(tokens);
@@ -160,26 +163,31 @@ public class Parser
                 if (thirdToken.Value == "router")
                 {
                     RouterIdentifiers.Add(firstToken.Value);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write($"  >>  {firstToken.Value} has been registered has a router");
                 }
                 else if (thirdToken.Value == "host")
                 {
                     HostIdentifiers.Add(firstToken.Value);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write($"  >>  {firstToken.Value} has been registered has a host");
                 }
                 else if (thirdToken.Value == "list")
                 {
                     ListIdentifiers.Add(firstToken.Value);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write($"  >>  {firstToken.Value} has been registered has a list");
                 }
                 else if (thirdToken.Value == "interface")
                 {
                     InterfaceIdentifiers.Add(firstToken.Value);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write($"  >>  {firstToken.Value} has been registered has an interface");
                 }
                 else if (thirdToken.Value == "packet")
                 {
                     PacketIdentifiers.Add(firstToken.Value);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write($"  >>  {firstToken.Value} has been registered has a packet");
                 }
                 else throw new Exception($"Expected router, host, list, interface, or packet, got {thirdToken.Value} at line {thirdToken.SourceLineNumber}");
@@ -187,6 +195,7 @@ public class Parser
             else if (thirdToken.Type == Token.TokenType.Identifier)
             {
                 IdentifierIdentifiers.Add(firstToken.Value);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.Write($"  >>  {firstToken.Value} has been registered has an identifier that derives from {thirdToken.Value}");
             }
             else throw new Exception($"Expected keyword or identifier, got {thirdToken.Value} at line {thirdToken.SourceLineNumber}");
@@ -195,6 +204,7 @@ public class Parser
         {
             if (interfaces.ContainsKey(firstToken.Value)) interfaces[firstToken.Value].Add(thirdToken.Value);
             else interfaces.Add(firstToken.Value, new List<string>() { thirdToken.Value });
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write($"  >>  {firstToken.Value} has been registered has an interface that derives from {thirdToken.Value}");
         }
         else if (secondToken.Value == "includes")
@@ -206,13 +216,17 @@ public class Parser
             if (!ListIdentifiers.Contains(thirdToken.Value)) throw new Exception($"Expected list identifier, got {thirdToken.Value} at line {thirdToken.SourceLineNumber}");
 
             // Now we can do the concactenation
-            // TODO - Implement concactenation 
+            List<Node> firstList = lists[firstToken.Value];
+            List<Node> secondList = lists[thirdToken.Value];
+            lists[firstToken.Value] = firstList.Concat(secondList).ToList();
+            
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write($"  >>  Concatenating {firstToken.Value} and {thirdToken.Value}");
         }
 
     }
 
-    void ValidateExpression(IEnumerable<Token> tokens)
+    void ValidateAndPrintExpression(IEnumerable<Token> tokens)
     {
         // Check for empty lines
         int Count = tokens.Count();
@@ -235,23 +249,25 @@ public class Parser
                     break;
                 case Token.TokenType.Keyword:
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    if (ProcessKeyword(token, tokens)) breakFlag = true;
+                    Console.Write($"{token.Value} ");
                     break;
                 case Token.TokenType.Identifier:
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    if (ProcessIdentifier(token, tokens)) breakFlag = true;
+                    Console.Write($"{token.Value} ");
+                    if (!identifiers.ContainsKey(token.Value)) identifiers[token.Value] = new List<Token>() { token };
+                    else identifiers[token.Value].Add(token);
                     break;
                 case Token.TokenType.Operator:
                     Console.ForegroundColor = ConsoleColor.White;
-                    if (ProcessOperator(token, tokens)) breakFlag = true;
+                    Console.Write($"{token.Value} ");
                     break;
                 case Token.TokenType.Literal:
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    if (ProcessLiteral(token, tokens)) breakFlag = true;
+                    Console.Write($"{token.Value} ");
                     break;
                 case Token.TokenType.String:
                     Console.ForegroundColor = ConsoleColor.Magenta;
-                    if (ProcessString(token, tokens)) breakFlag = true;
+                    Console.Write($"{token.Value} ");
                     break;
                 case Token.TokenType.Comment:
                     Console.ForegroundColor = ConsoleColor.Gray;
@@ -288,41 +304,5 @@ public class Parser
         }
 
         Console.ResetColor();
-    }
-
-    // Stub functions for processing tokens
-
-    private bool ProcessKeyword(Token token, IEnumerable<Token> tokens)
-    {
-        Console.Write($"{token.Value} ");
-        return false;
-    }
-
-    private bool ProcessIdentifier(Token token, IEnumerable<Token> tokens)
-    {
-        Console.Write($"{token.Value} ");
-
-        if (!identifiers.ContainsKey(token.Value)) identifiers[token.Value] = new List<Token>() { token };
-        else identifiers[token.Value].Add(token);
-
-        return false;
-    }
-
-    private bool ProcessOperator(Token token, IEnumerable<Token> tokens)
-    {
-        Console.Write($"{token.Value} ");
-        return false;
-    }
-
-    private bool ProcessLiteral(Token token, IEnumerable<Token> tokens)
-    {
-        Console.Write($"{token.Value} ");
-        return false;
-    }
-
-    private bool ProcessString(Token token, IEnumerable<Token> tokens)
-    {
-        Console.Write($"{token.Value} ");
-        return false;
     }
 }

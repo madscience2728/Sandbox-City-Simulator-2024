@@ -114,8 +114,7 @@ Highways is a list.
 AllRoads is a list.
 
 # Arterial Roads
-MainSt is create a Road.
-MainSt set name "Main Street".
+MainSt is create a Road "Main Street".
 ArterialRoads is create 4 Road on MainSt.
 AllRoads includes ArterialRoads.
 
