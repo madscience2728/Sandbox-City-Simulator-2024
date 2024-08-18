@@ -175,6 +175,7 @@ public class Parser
                 else if (thirdToken.Value == "list")
                 {
                     ListIdentifiers.Add(firstToken.Value);
+                    lists[firstToken.Value] = new List<Node>();
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write($"  >>  {firstToken.Value} has been registered has a list");
                 }
