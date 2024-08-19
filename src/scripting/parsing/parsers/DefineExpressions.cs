@@ -8,7 +8,7 @@ public class DefineExpression : IParseStuff
         //>> Check counts
         if (tokens.Count() != 3) return new ParseResult(ParseResult.State.Skip, "");
         
-        //>> Pull tokens
+        //>> Pull tokens 
         Token firstToken = tokens.First();
         Token secondToken = tokens.Skip(1).First();
         Token thirdToken = tokens.Skip(2).First();

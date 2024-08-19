@@ -14,6 +14,7 @@ public class Parser
         new PrintExpression(),
         new ValidateExpression(),
         new DefineExpression(),
+        new InterfaceExpression_Full(),
     ];
 
     ScriptInterpreter ScriptInterpreter;
@@ -35,10 +36,8 @@ public class Parser
             foreach (var parser in chainOfResponsibility)
             {
                 currentResult = parser.Parse(expression, ScriptInterpreter);
-                if (currentResult.state == ParseResult.State.Failure || currentResult.state == ParseResult.State.Skip)
-                {
-                    return false;
-                }
+                if (currentResult.state == ParseResult.State.Failure) return false;
+                //else if (currentResult.state == ParseResult.State.Skip) continue;
             }
             Console.WriteLine();
             return true;

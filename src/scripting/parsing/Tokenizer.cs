@@ -59,14 +59,14 @@ public static class Tokenizer
             { "name", Token.TokenType.Keyword },
             { "roll", Token.TokenType.Keyword },
             { "set", Token.TokenType.Keyword },
-            { ",", Token.TokenType.Keyword },
             { "implements", Token.TokenType.Keyword },
-            { ":", Token.TokenType.Keyword },
             { "call", Token.TokenType.Keyword },
             { "take", Token.TokenType.Keyword },
             //
             //
             // Ignored
+            { ":", Token.TokenType.Ignored },
+            { ",", Token.TokenType.Ignored },
             { "to", Token.TokenType.Ignored },
             { "of", Token.TokenType.Ignored },
             { "type", Token.TokenType.Ignored },

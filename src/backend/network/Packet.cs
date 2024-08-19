@@ -19,6 +19,12 @@ public class Packet : IName
     public Packet() {
         SetTTL();
     }
+    
+    public Packet(string name)
+    {
+        Name = name;
+        SetTTL();
+    }
 
     public Packet(string source, string destination)
     {

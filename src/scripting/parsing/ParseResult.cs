@@ -26,6 +26,8 @@ public class ParseResult
         Message = message;
         var expression = effected.Item1;
         var effectedToken = effected.Item2;
+        
+        if(state == State.Skip) return;
 
         //>> Print the error message line
         int count = expression.Count();
