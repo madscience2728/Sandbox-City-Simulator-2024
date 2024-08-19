@@ -122,11 +122,11 @@ CollectorRoads is create hubAndSpoke of Road on MainRoads with 2 to 6 children.
 AllRoads includes CollectorRoads.
 
 # Residential Roads
-ResidentialRoads is create hubAndSpoke of type Road on CollectorRoads with 2 to 6 children.
+ResidentialRoads is to create hubAndSpoke of type Road on CollectorRoads with 2 to 6 children.
 AllRoads includes ResidentialRoads.
 
 # Highways
-Highways is create connections of type Road on CollectorRoads with 10 to 50 children.
+Highways is to create connections of type Road on CollectorRoads with 10 to 50 children.
 AllRoads includes Highways.
 
 

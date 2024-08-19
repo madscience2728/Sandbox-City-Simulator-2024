@@ -2,19 +2,27 @@ namespace Sandbox_Simulator_2024.Scripting.Parsing;
 
 public class ParseResult
 {
-    public bool Success { get; }
+    public enum State
+    {
+        Success,
+        Skip,
+        Failure,
+        Default
+    }
+    
+    public State state { get; }
     public string Message { get; }
     
-    public ParseResult(bool success, string message)
+    public ParseResult(State state, string message)
     {
-        Success = success;
+        this.state = state;
         Message = message;
     }
 
-    public ParseResult(bool success, string message, (IEnumerable<Token>, Token?) effected)
+    public ParseResult(State state, string message, (IEnumerable<Token>, Token?) effected)
     {
         //>> Setup the method
-        Success = success;
+        this.state = state;
         Message = message;
         var expression = effected.Item1;
         var effectedToken = effected.Item2;

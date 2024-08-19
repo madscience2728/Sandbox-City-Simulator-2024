@@ -1,6 +1,5 @@
-using Sandbox_Simulator_2024.Scripting.Parsing.Parsers;
-
 namespace Sandbox_Simulator_2024.Scripting.Parsing;
+using Sandbox_Simulator_2024.Scripting.Parsing.Parsers;
 
 public class Parser
 {
@@ -14,6 +13,7 @@ public class Parser
     static readonly List<IParseStuff> chainOfResponsibility = [
         new PrintExpression(),
         new ValidateExpression(),
+        new DefineExpression(),
     ];
 
     ScriptInterpreter ScriptInterpreter;
@@ -28,21 +28,22 @@ public class Parser
         var tokens = Tokenizer.Tokenize(script);
         Console.ResetColor();
         Console.WriteLine("Parser found " + tokens.Count + " tokens");
-        ParseResult currentResult = new ParseResult(true, "Default result is true");
+        ParseResult currentResult = new ParseResult(ParseResult.State.Default, "");
 
         IterateExpressions(tokens, (expression) =>
         {
             foreach (var parser in chainOfResponsibility)
             {
                 currentResult = parser.Parse(expression, ScriptInterpreter);
-                if (!currentResult.Success)
+                if (currentResult.state == ParseResult.State.Failure || currentResult.state == ParseResult.State.Skip)
                 {
                     return false;
                 }
             }
+            Console.WriteLine();
             return true;
         });
-        return new ParseResult(true, "Parsing successful");
+        return new ParseResult(ParseResult.State.Success, "Parsing successful");
     }
 
     public bool IterateExpressions(IEnumerable<Token> tokens, Func<List<Token>, bool> Parse)
@@ -52,7 +53,6 @@ public class Parser
         {
             if (token.Type == Token.TokenType.Delimiter)
             {
-                lineTokens.Add(token);
                 if(!Parse(lineTokens)) return false;
                 lineTokens.Clear();
             }

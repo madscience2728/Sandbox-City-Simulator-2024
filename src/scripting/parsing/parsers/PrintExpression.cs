@@ -10,8 +10,7 @@ namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers
 
                 switch (token.Type)
                 {
-                    case Token.TokenType.Delimiter: 
-                        Console.WriteLine();
+                    case Token.TokenType.Delimiter:
                         break;
                     case Token.TokenType.Keyword: 
                         Print(token, ConsoleColor.DarkBlue); 
@@ -50,7 +49,7 @@ namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers
             }
 
             Console.ResetColor();
-            return new ParseResult(true, "We printed all tokens :)");
+            return new ParseResult(ParseResult.State.Success, "We printed all tokens :)");
         }
 
         static void Print(Token token, ConsoleColor color) => Print(token.Value, color);
