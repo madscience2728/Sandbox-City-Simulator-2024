@@ -23,13 +23,13 @@ public class DefineExpression : IParseStuff
             
         //>> Check second token
         if (secondToken.Value != "is") return new ParseResult(ParseResult.State.Skip, "Expected 'is' keyword", (tokens, secondToken));
-            
+
         //>> Evaluate
-        switch(thirdToken.Value)
+        // Not interfaces ahave their own IParseStuff
+        switch (thirdToken.Value)
         {
             case "router": return scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.Router, firstToken.Value);
             case "host": return scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.Host, firstToken.Value);
-            case "interface": return scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.Interface, firstToken.Value);
             case "list": return scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.List, firstToken.Value);
             case "packet": return scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.Packet, firstToken.Value);
         }

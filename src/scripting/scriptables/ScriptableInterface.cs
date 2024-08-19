@@ -56,7 +56,7 @@ public class ScriptableInterface : IScriptable
         }
         
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("(property added) ");
+        Console.Write($"(property {propertyType} added) ");
         return true;        
     }
 }

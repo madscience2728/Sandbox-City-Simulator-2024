@@ -42,7 +42,7 @@ public class ScriptInterpreter
         //>> Register the identifier
         allIdentifiers.Add(identifier);
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("(identifier registered) ");
+        Console.Write($"({identifier} registered to allIdentifiers) ");
         return new ParseResult(ParseResult.State.Success, "Registered " + scriptableType + " with identifier: " + identifier);
     }
     
@@ -54,7 +54,9 @@ public class ScriptInterpreter
     
         //>> Register the interface
         interfaces.Add(identifier, scriptableInterface);
+        Console.Write($"({identifier} registered as interface) ");
         scriptables.Add(scriptableInterface);
+        Console.Write($"(scriptableInterface {scriptableInterface.identifier} registered) ");
         return new ParseResult(ParseResult.State.Success, "Registered interface");
     }
 }

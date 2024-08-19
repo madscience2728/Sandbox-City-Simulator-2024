@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox Simulator 2024", "Sandbox Simulator 2024.csproj", "{AEE8D1BC-51B2-4163-AC52-69C604DC8849}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox Simulator 2024", "Sandbox Simulator 2024.csproj", "{49DA4932-9D3A-4678-B99B-39E540CA3334}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AEE8D1BC-51B2-4163-AC52-69C604DC8849}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AEE8D1BC-51B2-4163-AC52-69C604DC8849}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AEE8D1BC-51B2-4163-AC52-69C604DC8849}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AEE8D1BC-51B2-4163-AC52-69C604DC8849}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49DA4932-9D3A-4678-B99B-39E540CA3334}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49DA4932-9D3A-4678-B99B-39E540CA3334}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49DA4932-9D3A-4678-B99B-39E540CA3334}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49DA4932-9D3A-4678-B99B-39E540CA3334}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

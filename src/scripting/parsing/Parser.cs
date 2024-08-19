@@ -14,7 +14,7 @@ public class Parser
         new PrintExpression(),
         new ValidateExpression(),
         new DefineExpression(),
-        new InterfaceExpression_Full(),
+        new InterfaceExpression(),
     ];
 
     ScriptInterpreter ScriptInterpreter;
