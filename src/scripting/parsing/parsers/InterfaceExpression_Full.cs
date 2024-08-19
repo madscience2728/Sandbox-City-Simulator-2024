@@ -29,6 +29,7 @@ public class InterfaceExpression_Full : IParseStuff
         match &= fourthToken.Value == "has";
         if (!match) return new ParseResult(ParseResult.State.Skip, "");
         
+        scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.Interface, firstToken.Value);
         ScriptableInterface scriptableInterface = new ScriptableInterface(firstToken.Value);
         
         //>> Parse the properties, injest two tokens at a time, until we hit a delimeter , or run out
