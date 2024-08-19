@@ -37,16 +37,11 @@ public class Parser
                 currentResult = parser.Parse(expression, ScriptInterpreter);
                 if (!currentResult.Success)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("[Parsing failed]"); 
-                    Console.WriteLine(currentResult.Message);
-                    Console.ResetColor();
                     return false;
                 }
             }
             return true;
         });
-        Console.ResetColor(); // house cleaning
         return new ParseResult(true, "Parsing successful");
     }
 

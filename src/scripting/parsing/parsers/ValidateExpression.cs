@@ -5,17 +5,27 @@ public class ValidateExpression : IParseStuff
 {
     public ParseResult Parse(IEnumerable<Token> tokens, ScriptInterpreter scriptInterpreter)
     {
-        // Check for empty lines
+        //>> Check for empty or short lines [PASSED]
         int Count = tokens.Count();
-        if (Count == 1) return new ParseResult(false, "Empty line found. You may have a stray delimiter token (a period '.')");
-        if (Count == 2) return new ParseResult(false, "Expected more than one token, only got: " + tokens.First().Value);
-        if (Count == 3) return new ParseResult(false, "You seem to be missing a token or more. Expected more than two tokens, only got: " + tokens.First().Value + " and " + tokens.Skip(1).First().Value);
+        if (Count == 1) return new ParseResult(false, "Empty line found. You may have a stray delimiter token (a period '.')", (tokens, null));
+        if (Count == 2) return new ParseResult(false, "Expected more than one token, only got: " + tokens.First().Value, (tokens, null));
+        if (Count == 3) return new ParseResult(false, "You seem to be missing a token or more. Expected more than two tokens, only got: " + tokens.First().Value + " and " + tokens.Skip(1).First().Value, (tokens, null));
 
+        //>> Check for unknown tokens [PASSED]
         foreach (var token in tokens)
         {
             if (token.Type == Token.TokenType.Unknown)
-                return new ParseResult(false, $"Could not parse the tokens. Token of unknown type found. Token is {token.Value}.");
+                return new ParseResult(false, $"Could not parse the tokens. Token of unknown type found. Token is {token.Value}.", (tokens, token));
         }
+        
+        //>> Check for non-identifiers in the first token [PASSED]
+        if (tokens.First().Type != Token.TokenType.Identifier)
+            return new ParseResult(false, "Expected an identifier as the first token, but got: " + tokens.First().Value, (tokens, tokens.First()));
+            
+        //>> Check for non-keywords in the second token [PASSED]
+        if (tokens.Skip(1).First().Type != Token.TokenType.Keyword)
+            return new ParseResult(false, "Expected a keyword as the second token, but got: " + tokens.Skip(1).First().Value, (tokens, tokens.Skip(1).First()));
+        
         return new ParseResult(true, "All tokens are valid.");
     }
 }

@@ -4,14 +4,12 @@ namespace Sandbox_Simulator_2024.Scripting;
 
 
 
+
+
 public class FireStationExampleScript
 {
     public static string draft = """
 ### FIRE STATION EXAMPLE SCRIPT ###
-
-
-
-
 
 ### Define lists, hosts, and routers ###
 
