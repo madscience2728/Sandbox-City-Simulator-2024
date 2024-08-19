@@ -4,19 +4,6 @@ namespace Sandbox_Simulator_2024.Scripting.Parsing;
 
 public class Parser
 {
-    // Dictionary<string, List<Token>> identifiers = new();
-    // Dictionary<string, string> names = new();
-    // Dictionary<string, List<string>> interfaces = new();
-    // List<string> PacketIdentifiers = new();
-    // List<string> InterfaceIdentifiers = new();
-    // List<string> RouterIdentifiers = new();
-    // List<string> HostIdentifiers = new();
-    // List<string> ListIdentifiers = new();
-    // List<string> IdentifierIdentifiers = new();
-    // Dictionary<string, List<Node>> lists = new();
-    // Dictionary<string, List<ScriptableRouter>> routers = new();
-    // Dictionary<string, List<ScriptableHost>> hosts = new();
-    
     static readonly Token.TokenType[] tokensToSkip = new Token.TokenType[] {
         Token.TokenType.NewLine,
         Token.TokenType.Comment,
@@ -24,10 +11,17 @@ public class Parser
         Token.TokenType.Ignored
     };
 
-    List<IParseStuff> chainOfResponsibility = [
+    static readonly List<IParseStuff> chainOfResponsibility = [
         new PrintExpression(),
         new ValidateExpression(),
     ];
+
+    ScriptInterpreter ScriptInterpreter;
+    
+    public Parser(ScriptInterpreter scriptInterpreter)
+    {
+        ScriptInterpreter = scriptInterpreter;
+    }
 
     public ParseResult Parse(string script)
     {
@@ -40,7 +34,7 @@ public class Parser
         {
             foreach (var parser in chainOfResponsibility)
             {
-                currentResult = parser.Parse(expression);
+                currentResult = parser.Parse(expression, ScriptInterpreter);
                 if (!currentResult.Success)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -54,11 +48,6 @@ public class Parser
         });
         Console.ResetColor(); // house cleaning
         return new ParseResult(true, "Parsing successful");
-    }
-
-    private void ParseExpression(List<Token> list)
-    {
-        throw new NotImplementedException();
     }
 
     public bool IterateExpressions(IEnumerable<Token> tokens, Func<List<Token>, bool> Parse)

@@ -2,7 +2,7 @@ namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers
 {
     public class PrintExpression : IParseStuff
     {
-        public ParseResult Parse(IEnumerable<Token> tokens)
+        public ParseResult Parse(IEnumerable<Token> tokens, ScriptInterpreter scriptInterpreter)
         {
             foreach (var token in tokens)
             {
