@@ -1,14 +1,27 @@
-﻿namespace Sandbox_City_Simulator_2024;
-using Sandbox_City_Simulator_2024.PrintTools;
+﻿namespace Sandbox_Simulator_2024;
+using Sandbox_Simulator_2024.PrintTools;
+using Sandbox_Simulator_2024.Scripting;
+using Network.Core; 
 
 class Program
 {
     async static Task Main(string[] args)
     {
         Print.Clear();
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Console.WriteLine(new string('#', Console.WindowWidth));
+        Print.Immediate("Sandbox Simulator 2024");
         Print.ConsoleResetColor();
 
-        for (int i = 0; i < 100; i++)
+        /*for (int i = 0; i < 100; i++)
         {
             
             
@@ -28,14 +41,16 @@ class Program
             Print.Line();
             Print.Line();
             Print.Line();
-        }
+        }*/
+        
+        Print.Line("Welcome to Sandbox Simulator 2024");
 
+        ScriptInterpreter interpreter = new ScriptInterpreter(FireStationExampleScript.draft);
+        //await Network.Start("Test Net");
 
-
-
+        await Task.Delay(-1);
         while (true)
         {
-            await new Game().Play();
             Print.Clear();
             Print.Pause("play again");
         }

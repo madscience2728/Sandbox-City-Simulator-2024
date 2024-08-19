@@ -1,4 +1,4 @@
-namespace Sandbox_City_Simulator_2024.PrintTools;
+namespace Sandbox_Simulator_2024.PrintTools;
 
 using System.Collections.Concurrent;
 using Network.Core;
@@ -47,7 +47,8 @@ public static class Print
 
     public static void Meta(object o, bool appendTime = false)
     {
-        if (appendTime) ByWord($"[{Game.GetTime()}]");
+        if (appendTime) ByWord($"{Tickuffix()} {o}");
+        else ByWord(o);
         ConsoleResetColor();
 
         Console.ForegroundColor = ConsoleColor.Green;
@@ -194,11 +195,16 @@ public static class Print
 
         ConsoleResetColor();
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write($"[{Game.GetTime(message.time)}] "); 
+        Console.Write(Tickuffix() + " "); 
         Console.ForegroundColor = message.color;
         ByWord(message.message);
         ConsoleResetColor();
         printFlag = true;
+    }
+    
+    public static string Tickuffix()
+    {
+        return $"[Network tick: {Network.tick}]";
     }
 
     public static void Immediate()

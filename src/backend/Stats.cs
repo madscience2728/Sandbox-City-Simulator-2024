@@ -1,8 +1,11 @@
-namespace Sandbox_City_Simulator_2024;
+namespace Sandbox_Simulator_2024;
 
 // Applicapable to any creature entity in the game
 public class Stats
 {
+    const float PersonVariabilitySigma = 0.1f;
+
+
     static readonly Random random = new Random();
 
     public static float GaussianBetween01(float sigma)
@@ -56,22 +59,22 @@ public class Stats
 
         public class Immutable : TraitOperators
         {
-            public float Luck { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float AddictionPrepensity { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float Empathy { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float Happiness { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float Criminality { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float Agression { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+            public float Luck { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float AddictionPrepensity { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Empathy { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Happiness { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Criminality { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Agression { get; set; } = GaussianBetween01(PersonVariabilitySigma);
         }
 
         public class Variable : TraitOperators
         {
-            public float Health { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float Intelligence { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float Addiction { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float Energy { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float Hunger { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
-            public float SocialFulfillment { get; set; } = GaussianBetween01(Game.PersonVariability / 100f);
+            public float Health { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Intelligence { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Addiction { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Energy { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Hunger { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float SocialFulfillment { get; set; } = GaussianBetween01(PersonVariabilitySigma);
         }
         
         public Immutable immutable = new Immutable();
@@ -117,16 +120,4 @@ public class Stats
 
     public bool RollAgression() => random.NextSingle() < DetermineAgression();
     public float DetermineAgression() => (1f - traits.immutable.Empathy) * traits.immutable.Agression;
-    
-    // Static method to use reflection to get all stats and average them, given a list of IHasStats
-    public static Stats AverageStats(List<IHasStats> statsList)
-    {
-        Stats averageStats = new Stats();
-        
-        // Get all properties of the Stats class
-        
-        
-
-        return averageStats;
-    }
 }
