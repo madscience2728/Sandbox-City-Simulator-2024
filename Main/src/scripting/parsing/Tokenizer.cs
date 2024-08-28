@@ -58,13 +58,14 @@ public static class Tokenizer
             { "string", Token.TokenType.Keyword },
             { "name", Token.TokenType.Keyword },
             { "roll", Token.TokenType.Keyword },
-            { "set", Token.TokenType.Keyword },
             { "implements", Token.TokenType.Keyword },
             { "call", Token.TokenType.Keyword },
             { "take", Token.TokenType.Keyword },
             //
             //
             // Ignored
+            { "set", Token.TokenType.Ignored },
+            { "also", Token.TokenType.Ignored },
             { ":", Token.TokenType.Ignored },
             { ",", Token.TokenType.Ignored },
             { "to", Token.TokenType.Ignored },
@@ -78,6 +79,8 @@ public static class Tokenizer
             { "an", Token.TokenType.Ignored },
             { "a", Token.TokenType.Ignored },
             { "with", Token.TokenType.Ignored },
+            { "named", Token.TokenType.Ignored },
+            { "does", Token.TokenType.Ignored },
             
             
             // Add other keywords here

@@ -3,9 +3,6 @@ namespace Sandbox_Simulator_2024.Scripting;
 
 
 
-
-
-
 public class FireStationExampleScript
 {
     public static string draft = """
