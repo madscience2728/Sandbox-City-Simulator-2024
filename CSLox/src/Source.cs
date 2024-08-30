@@ -3,17 +3,12 @@ namespace CSLox;
 public class Source
 {
     public static readonly string source =
-"""
-// this is a comment
-
-    (5 + 4 / 3 - 2) / 5 * 3;
-    "beep boop" + "Hello world";
-    523.254 / 123.321;
-    1 != 1;
-    
-
-
-""";
+    """
+    (
+        // this is a comment
+        !(-1 == 1 != (3 >= 2) <= 4)
+    )
+    """;
 
 
 

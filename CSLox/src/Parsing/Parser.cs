@@ -163,7 +163,7 @@ internal class Parser
         if (Match(TokenType.LEFT_PAREN))
         {
             Expression expression = ParseExpression();
-            Consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.");
+            Consume(TokenType.RIGHT_PAREN, "Expected ')' after expression. Are you missing a closing parenthesis?");
             return new Expression.Grouping(expression);
         }
 
@@ -205,7 +205,14 @@ internal class Parser
         if (!IsAtEnd()) current++;
         return Previous();
     }
-    
+
+    //| HELPER
+    private Token PeekPeek()
+    {
+        if(IsAtEnd()) return new Token(TokenType.EOF, "", null, 0);
+        return tokens[current + 1];
+    }
+
     //| HELPERS
     private bool IsAtEnd() => Peek().type == TokenType.EOF;
     private Token Peek() => tokens[current];
