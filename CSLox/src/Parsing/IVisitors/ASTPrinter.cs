@@ -2,7 +2,7 @@ namespace CSLox.Parsing;
 
 internal class AstPrinter : Expression.IVisitor<string>
 {
-    public string VisitBinaryExpr(Expression.Binary expression)
+    public string VisitBinaryExpression(Expression.Binary expression)
     {
         return Parenthesize(
             expression.operatorToken.lexeme, 
@@ -11,18 +11,18 @@ internal class AstPrinter : Expression.IVisitor<string>
         );
     }
 
-    public string VisitGroupingExpr(Expression.Grouping expression)
+    public string VisitGroupingExpression(Expression.Grouping expression)
     {
         return Parenthesize("group", expression.expression);
     }
 
-    public string VisitLiteralExpr(Expression.Literal expression)
+    public string VisitLiteralExpression(Expression.Literal expression)
     {
         if (expression.value == null) return "nil";
         return expression.value.ToString()!;
     }
 
-    public string VisitUnaryExpr(Expression.Unary expression)
+    public string VisitUnaryExpression(Expression.Unary expression)
     {
         return Parenthesize(
             expression.operatorToken.lexeme, 

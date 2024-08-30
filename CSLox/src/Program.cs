@@ -3,12 +3,19 @@
 using CSLox.Parsing;
 using CSLox.Scanning;
 
+/*
+
+
+source → SCANNER → tokens → PARSER → expressions → INTERPRETER → output
+
+*/
+
 class Program
 {
     static void Main(string[] args)
     {
         Console.WriteLine(DateTime.Now);
-        
+
         TestParser(Source.source);
         // TestScanner(Source.source);
         // TestAstPrinter();
@@ -20,7 +27,7 @@ class Program
         //
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.ScanTokens();
-        foreach(Token token in tokens) Console.WriteLine(token);
+        foreach (Token token in tokens) Console.WriteLine(token);
         //
         Parser parser = new Parser(tokens);
         Expression? expression = parser.Parse();
@@ -51,16 +58,16 @@ class Program
     {
         Scanner scanner = new Scanner(source);
         Error.Reset();
-        
+
         List<Token> tokens = scanner.ScanTokens();
 
         // For now, just print the tokens.
-        foreach(Token token in tokens)
+        foreach (Token token in tokens)
         {
             Console.WriteLine(token);
         }
-        
-        if(Error.hadError)
+
+        if (Error.hadError)
         {
             Console.WriteLine("Error parsing.");
         }

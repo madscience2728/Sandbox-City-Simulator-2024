@@ -3,7 +3,9 @@ namespace CSLox;
 internal class Error
 {
     public class ParseError : Exception { }
-    
+    public class UnreachableCodeWasReachedError : Exception { }
+    public class RuntimeError : Exception { }
+
     public static bool hadError = false;
 
     public static void Reset()

@@ -5,10 +5,10 @@ internal abstract class Expression
 {
     public interface IVisitor<T>
     {
-        T VisitBinaryExpr(Binary expr);
-        T VisitGroupingExpr(Grouping expr);
-        T VisitLiteralExpr(Literal expr);
-        T VisitUnaryExpr(Unary expr);
+        T VisitBinaryExpression(Binary expr);
+        T VisitGroupingExpression(Grouping expr);
+        T VisitLiteralExpression(Literal expr);
+        T VisitUnaryExpression(Unary expr);
     }
     
     public abstract T Accept<T>(IVisitor<T> visitor);
@@ -28,7 +28,7 @@ internal abstract class Expression
         
         public override T Accept<T>(IVisitor<T> visitor)
         {
-            return visitor.VisitBinaryExpr(this);
+            return visitor.VisitBinaryExpression(this);
         }
     }
     
@@ -43,7 +43,7 @@ internal abstract class Expression
         
         public override T Accept<T>(IVisitor<T> visitor)
         {
-            return visitor.VisitGroupingExpr(this);
+            return visitor.VisitGroupingExpression(this);
         }
     }
     
@@ -58,7 +58,7 @@ internal abstract class Expression
         
         public override T Accept<T>(IVisitor<T> visitor)
         {
-            return visitor.VisitLiteralExpr(this);
+            return visitor.VisitLiteralExpression(this);
         }
     }
     
@@ -75,7 +75,7 @@ internal abstract class Expression
         
         public override T Accept<T>(IVisitor<T> visitor)
         {
-            return visitor.VisitUnaryExpr(this);
+            return visitor.VisitUnaryExpression(this);
         }
     }
 }
