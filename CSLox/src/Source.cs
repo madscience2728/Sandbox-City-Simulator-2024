@@ -6,12 +6,11 @@ public class Source
 """
 // this is a comment
 
-
-    (
-        "beep boop" + "Hello world";
-        523.254 / 123.321;
-        1 != 1;
-    )
+    (5 + 4 / 3 - 2) / 5 * 3;
+    "beep boop" + "Hello world";
+    523.254 / 123.321;
+    1 != 1;
+    
 
 
 """;

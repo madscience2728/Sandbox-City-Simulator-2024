@@ -164,6 +164,7 @@ internal class Parser
         {
             Expression expression = ParseExpression();
             Consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.");
+            return new Expression.Grouping(expression);
         }
 
         throw ParseError(Peek(), $"Expected expression, found {Peek()}.");
