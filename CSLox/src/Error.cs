@@ -2,6 +2,8 @@ namespace CSLox;
 
 internal class Error
 {
+    public class ParseError : Exception { }
+    
     public static bool hadError = false;
 
     public static void Reset()

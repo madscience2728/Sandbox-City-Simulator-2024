@@ -1,4 +1,4 @@
-namespace CSLox;
+namespace CSLox.Scanning;
 
 internal enum TokenType
 {
@@ -19,5 +19,7 @@ internal enum TokenType
     AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
     PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
 
-    EOF
+    EOF,
+    
+    ERROR
 }
