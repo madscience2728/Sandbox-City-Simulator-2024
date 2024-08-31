@@ -40,7 +40,7 @@ internal class Parser
     public Error.ParseError ParseError(Token token, string message)
     {
         Error.Report(token.line, message);
-        return new Error.ParseError();
+        return new Error.ParseError(token, message);
     }
 
     //| Error handling

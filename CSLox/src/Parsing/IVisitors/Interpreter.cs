@@ -1,7 +1,38 @@
+using CSLox.Scanning;
+
 namespace CSLox.Parsing;
 
 internal class Interpreter : Expression.IVisitor<object>
 {
+    public void Interpret(Expression expression)
+    {
+        try
+        {
+            object value = Evaluate(expression);
+            Console.WriteLine(Stringify(value));
+        }
+        catch (Error.BaseException error)
+        {
+            Error.Report(error);
+        }
+    }
+
+    private string Stringify(object o)
+    {
+        if (o == null) return "nil";
+
+        if (o is double) {
+            string text = o.ToString()!;
+            if (text.EndsWith(".0"))
+            {
+                text = Program.Substring(text, 0, text.Length - 2);
+            }
+            return text;
+        }
+
+        return o.ToString()!;
+    }
+
     public object VisitBinaryExpression(Expression.Binary expression)
     {
         object left = Evaluate(expression.left);
@@ -9,26 +40,33 @@ internal class Interpreter : Expression.IVisitor<object>
 
         switch (expression.operatorToken.type)
         {
-            case Scanning.TokenType.GREATER:
+            case TokenType.GREATER:
+                CheckNumberOperands(expression.operatorToken, left, right);
                 return (double)left > (double)right;
-            case Scanning.TokenType.GREATER_EQUAL:
+            case TokenType.GREATER_EQUAL:
+                CheckNumberOperands(expression.operatorToken, left, right);
                 return (double)left >= (double)right;
-            case Scanning.TokenType.LESS:
+            case TokenType.LESS:
+                CheckNumberOperands(expression.operatorToken, left, right);
                 return (double)left < (double)right;
-            case Scanning.TokenType.LESS_EQUAL:
+            case TokenType.LESS_EQUAL:
+                CheckNumberOperands(expression.operatorToken, left, right);
                 return (double)left <= (double)right;
-            case Scanning.TokenType.MINUS:
+            case TokenType.MINUS:
+                CheckNumberOperands(expression.operatorToken, left, right);
                 return (double)left - (double)right;
-            case Scanning.TokenType.SLASH:
+            case TokenType.SLASH:
+                CheckNumberOperands(expression.operatorToken, left, right);
                 return (double)left / (double)right;
-            case Scanning.TokenType.STAR:
+            case TokenType.STAR:
+                CheckNumberOperands(expression.operatorToken, left, right);
                 return (double)left * (double)right;
-            case Scanning.TokenType.PLUS:
+            case TokenType.PLUS:
                 if (left is double && right is double) return (double)left + (double)right;
                 if (left is string && right is string) return (string)left + (string)right;
-                break;
-            case Scanning.TokenType.BANG_EQUAL: return !IsEqual(left, right);
-            case Scanning.TokenType.EQUAL_EQUAL: return IsEqual(left, right);
+                throw new Error.RuntimeError(expression.operatorToken, "Operands must be two numbers or two strings.");
+            case TokenType.BANG_EQUAL: return !IsEqual(left, right);
+            case TokenType.EQUAL_EQUAL: return IsEqual(left, right);
         }
 
         // Unreachable.
@@ -51,9 +89,10 @@ internal class Interpreter : Expression.IVisitor<object>
 
         switch (expression.operatorToken.type)
         {
-            case Scanning.TokenType.MINUS:
+            case TokenType.MINUS:
+                CheckNumberOperand(expression.operatorToken, right);
                 return -(double)right;
-            case Scanning.TokenType.BANG:
+            case TokenType.BANG:
                 return !IsTruthy(right);
         }
 
@@ -63,6 +102,20 @@ internal class Interpreter : Expression.IVisitor<object>
 
     //| HELPER
     private object Evaluate(Expression expression) => expression.Accept(this);
+
+    //| HELPER
+    private void CheckNumberOperands(Token operatorToken, object left, object right)
+    {
+        if (left is double && right is double) return;
+        throw new Error.RuntimeError(operatorToken, "Operands must be numbers.");
+    }
+
+    //| HELPER
+    private void CheckNumberOperand(Token operatorToken, object operand)
+    {
+        if (operand is double) return;
+        throw new Error.RuntimeError(operatorToken, "Operand must be a number.");
+    }
 
     //| HELPER
     private bool IsEqual(object left, object right)

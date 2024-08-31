@@ -128,7 +128,7 @@ internal class Scanner
             while (IsDigit(Peek())) Advance();
         }
 
-        AddToken(TokenType.NUMBER, double.Parse(Substring(source, start, current)));
+        AddToken(TokenType.NUMBER, double.Parse(Program.Substring(source, start, current)));
     }
 
     private bool IsDigit(char c)
@@ -141,7 +141,7 @@ internal class Scanner
         //<< Consume the rest of the identifier.
         while (IsAlphaNumeric(Peek())) Advance();
 
-        string text = Substring(source, start, current);
+        string text = Program.Substring(source, start, current);
         TokenType type;
         if (!keywords.TryGetValue(text, out type)) type = TokenType.IDENTIFIER;
         AddToken(type);
@@ -177,7 +177,7 @@ internal class Scanner
         Advance();
 
         // Trim the surrounding quotes.
-        string value = Substring(source, start + 1, current - 1);
+        string value = Program.Substring(source, start + 1, current - 1);
         AddToken(TokenType.STRING, value);
     }
 
@@ -214,12 +214,7 @@ internal class Scanner
 
     private void AddToken(TokenType type, object? literal)
     {
-        string text = Substring(source, start, current);
+        string text = Program.Substring(source, start, current);
         tokens.Add(new Token(type, text, literal, line));
-    }
-
-    private string Substring(string source, int start, int end)
-    {
-        return source.Substring(start, end - start);
     }
 }

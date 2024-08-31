@@ -16,11 +16,36 @@ class Program
     {
         Console.WriteLine(DateTime.Now);
 
-        TestParser(Source.source);
+        TestInterpreter(Source.source);
+        //TestParser(Source.source);
         // TestScanner(Source.source);
         // TestAstPrinter();
     }
+    
+    //| TESTER
+    static void TestInterpreter(string source)
+    {
+        Error.Reset();
+        //
+        Scanner scanner = new Scanner(source);
+        List<Token> tokens = scanner.ScanTokens();
+        foreach (Token token in tokens) Console.WriteLine(token);
+        //
+        Parser parser = new Parser(tokens);
+        Expression? expression = parser.Parse();
 
+        if (Error.hadError)
+        {
+            Console.WriteLine("Error parsing.");
+        }
+
+        if (expression != null)
+        {
+            new Interpreter().Interpret(expression);
+        }
+    }
+
+    //| TESTER
     static void TestParser(string source)
     {
         Error.Reset();
@@ -43,6 +68,7 @@ class Program
         }
     }
 
+    //| TESTER
     static void TestAstPrinter()
     {
         Expression expression = new Expression.Binary(
@@ -54,6 +80,7 @@ class Program
         Console.WriteLine(new AstPrinter().Print(expression));
     }
 
+    //| TESTER
     static void TestScanner(string source)
     {
         Scanner scanner = new Scanner(source);
@@ -71,5 +98,11 @@ class Program
         {
             Console.WriteLine("Error parsing.");
         }
+    }
+
+    //| HELPER
+    public static string Substring(string source, int start, int end)
+    {
+        return source.Substring(start, end - start);
     }
 }

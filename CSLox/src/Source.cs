@@ -6,7 +6,7 @@ public class Source
     """
     (
         // this is a comment
-        !(-1 == 1 != (3 >= 2) <= 4)
+        1 + 2 * 3 - 4 / 5
     )
     """;
 
