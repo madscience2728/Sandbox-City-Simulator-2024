@@ -36,7 +36,7 @@ class Program
         List<Token> tokens = scanner.ScanTokens();
         //
         Parser parser = new Parser(tokens);
-        Expression? expression = parser.Parse();
+        Expression? expression = parser.ParseSingle();
 
         if (Error.hadError)
         {
@@ -73,7 +73,7 @@ class Program
         foreach (Token token in tokens) Console.WriteLine(token);
         //
         Parser parser = new Parser(tokens);
-        Expression? expression = parser.Parse();
+        Expression? expression = parser.ParseSingle();
 
         if (Error.hadError)
         {

@@ -4,6 +4,11 @@ using CSLox.Scanning;
 
 /*
 
+program        → statement* EOF ;
+statement      → exprStmt | printStmt ;
+exprStmt       → expression ";" ;
+printStmt      → "print" expression ";" ;
+
 expression     → equality ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
@@ -24,7 +29,19 @@ internal class Parser
         this.tokens = tokens;
     }
 
-    public Expression? Parse()
+    //| program → statement* EOF;
+    public List<Statement> Parse()
+    {
+        List<Statement> statements = new List<Statement>();
+        while (!IsAtEnd())
+        {
+            statements.Add(ParseStatement());
+        }
+
+        return statements;
+    }
+
+    public Expression? ParseSingle()
     {
         try
         {
@@ -68,6 +85,38 @@ internal class Parser
             Advance();
         }
     }
+    
+    //| statement → exprStmt | printStmt ;
+    Statement ParseStatement()
+    {
+        try
+        {
+            if (Match(TokenType.PRINT)) return ParsePrintStatement();
+            return ParseExpressionStatement();
+        }
+        catch (Error.ParseError)
+        {
+            Synchronize();
+            return null!;
+        }
+    }
+
+    //| exprStmt → expression ";" ;
+    Statement ParseExpressionStatement()
+    {
+        Expression expression = ParseExpression();
+        Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new Statement().Expression(expression);
+    }
+
+    //| printStmt → "print" expression ";" ;
+    Statement ParsePrintStatement()
+    { 
+        Expression expression = ParseExpression();
+        Consume(TokenType.SEMICOLON, "Expected ';' after value.");
+        return new Statement().Print(expression);
+    }
+    
 
     //| expression → equality ;
     private Expression ParseExpression()
