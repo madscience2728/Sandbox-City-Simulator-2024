@@ -25,11 +25,15 @@ class Program
     //| TESTER
     static void TestInterpreter(string source)
     {
+        Console.WriteLine("[                                      ]");
+        Console.WriteLine("[    <<<    INTERPRETER TEST    >>>    ]");
+        Console.WriteLine("[                                      ]");
+        Console.WriteLine();
+
         Error.Reset();
         //
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.ScanTokens();
-        foreach (Token token in tokens) Console.WriteLine(token);
         //
         Parser parser = new Parser(tokens);
         Expression? expression = parser.Parse();
@@ -41,7 +45,21 @@ class Program
 
         if (expression != null)
         {
+            Console.WriteLine("[SOURCE]");
+            Console.WriteLine(source);
+            Console.WriteLine();
+            
+            Console.WriteLine("[TOKENS]");
+            foreach (Token token in tokens) Console.WriteLine(token);
+            Console.WriteLine();
+
+            Console.WriteLine("[AST]");
+            Console.WriteLine(new AstPrinter().Print(expression));
+            Console.WriteLine();
+            
+            Console.WriteLine("[INTERPRETER RESULT]");
             new Interpreter().Interpret(expression);
+            Console.WriteLine();
         }
     }
 

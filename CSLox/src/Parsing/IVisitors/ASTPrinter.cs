@@ -42,7 +42,7 @@ internal class AstPrinter : Expression.IVisitor<string>
         foreach (Expression expression in expressions)
         {
             builder.Append(" ");
-            builder.Append(expression.Accept(this)); 
+            builder.Append(expression.Accept(this));
         }
         builder.Append(")");
 
