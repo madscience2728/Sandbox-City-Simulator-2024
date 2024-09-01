@@ -1,6 +1,7 @@
 namespace CSLox;
 
 using CSLox.Parsing;
+using CSLox.Scanning;
 
 // Statements change state... or they produce output.
 internal abstract class Statement
@@ -12,6 +13,7 @@ internal abstract class Statement
         T VisitPrintStatement(PrintStatement stmt);
         T VisitPrintLineStatement(PrintLineStatement stmt);
         T VisitExpressionStatement(ExpressionStatement stmt);
+        T VisitVariableDeclarationStatement(VariableDeclarationStatement stmt);
     }
 
     public class PrintStatement : Statement
@@ -57,6 +59,23 @@ internal abstract class Statement
         public override T Accept<T>(IVisitStatements<T> visitor)
         {
             return visitor.VisitExpressionStatement(this);
+        }
+    }
+    
+    public class VariableDeclarationStatement : Statement
+    {
+        public Token name;
+        public Expression? initializer;
+        
+        public VariableDeclarationStatement(Token name, Expression? initializer)
+        {
+            this.name = name;
+            this.initializer = initializer;
+        }
+        
+        public override T Accept<T>(IVisitStatements<T> visitor)
+        {
+            return visitor.VisitVariableDeclarationStatement(this);
         }
     }
 }

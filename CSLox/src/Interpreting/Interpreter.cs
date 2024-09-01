@@ -19,18 +19,6 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         }
     }
 
-    public void Interpret(Expression expression)
-    {
-        try
-        {
-            object value = Evaluate(expression);
-        }
-        catch (Error.BaseException error)
-        {
-            Error.Report(error);
-        }
-    }
-
     //| IVisitStatements<object>
     public object VisitPrintStatement(Statement.PrintStatement statement)
     {
@@ -53,6 +41,12 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         Evaluate(statement.expression);
         return null!;
     } 
+    
+    //| IVisitStatements<object>
+    public object VisitVariableDeclarationStatement(Statement.VariableDeclarationStatement statement)
+    {
+        throw new NotImplementedException();
+    }
     
     //| IVisitExpressions<object>
     public object VisitBinaryExpression(Expression.Binary expression)
@@ -125,6 +119,11 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         throw new Error.UnreachableCodeWasReachedError();
     }
 
+    //| IVisitExpressions<object>
+    public object VisitVariableExpression(Expression.Variable expression)
+    {
+        throw new NotImplementedException();
+    }
 
     //| HELPERS
     private void Execute(Statement statement) => statement.Accept(this);

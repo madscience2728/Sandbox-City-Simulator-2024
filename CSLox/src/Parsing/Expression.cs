@@ -9,6 +9,7 @@ internal abstract class Expression
         T VisitGroupingExpression(Grouping expr);
         T VisitLiteralExpression(Literal expr);
         T VisitUnaryExpression(Unary expr);
+        T VisitVariableExpression(Variable expr);
     }
     
     public abstract T Accept<T>(IVisitExpressions<T> visitor);
@@ -76,6 +77,21 @@ internal abstract class Expression
         public override T Accept<T>(IVisitExpressions<T> visitor)
         {
             return visitor.VisitUnaryExpression(this);
+        }
+    }
+    
+    public class Variable : Expression
+    {
+        public Token name { get; private set; }
+
+        public Variable(Token name)
+        {
+            this.name = name;
+        }
+        
+        public override T Accept<T>(IVisitExpressions<T> visitor)
+        {
+            return visitor.VisitVariableExpression(this);
         }
     }
 }

@@ -4,7 +4,12 @@ using CSLox.Scanning;
 
 /*
 
-program        → statement* EOF ;
+program        → declaration* EOF ;
+
+declaration    → varDecl | statement ;
+
+varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+
 statement      → exprStmt | printStmt | printLineStmt ;
 exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
@@ -16,7 +21,7 @@ comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
 factor         → unary ( ( "/" | "*" ) unary )* ;
 unary          → ( "!" | "-" ) unary | primary ;
-primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
 
 */
 
@@ -29,9 +34,21 @@ internal class Parser
     {
         this.tokens = tokens;
     }
-
-    //| program → statement* EOF;
+    
+    //| program → declaration* EOF;
     public List<Statement> Parse()
+    {
+        List<Statement> statements = new List<Statement>();
+        while (!IsAtEnd())
+        {
+            statements.Add(ParseDeclaration());
+        }
+
+        return statements;
+    }
+
+#region indev
+    public List<Statement> ParseStatements()
     {
         List<Statement> statements = new List<Statement>();
         while (!IsAtEnd())
@@ -42,7 +59,7 @@ internal class Parser
         return statements;
     }
 
-    public Expression? ParseSingle()
+    public Expression? ParseSingleExpression()
     {
         try
         {
@@ -53,40 +70,37 @@ internal class Parser
             return null;
         }
     }
+#endregion
 
-    //| Error handling
-    public Error.ParseError ParseError(Token token, string message)
+    //| declaration → varDecl | statement ;
+    private Statement ParseDeclaration()
     {
-        Error.Report(token.line, message);
-        return new Error.ParseError(token, message);
-    }
-
-    //| Error handling
-    private void Synchronize()
-    {
-        Advance();
-
-        while (!IsAtEnd())
+        try
         {
-            if (Previous().type == TokenType.SEMICOLON) return;
-
-            switch (Peek().type)
-            {
-                case TokenType.CLASS:
-                case TokenType.FUN:
-                case TokenType.VAR:
-                case TokenType.FOR:
-                case TokenType.IF:
-                case TokenType.WHILE:
-                case TokenType.PRINT:
-                case TokenType.RETURN:
-                    return;
-            }
-
-            Advance();
+            if (Match(TokenType.VAR)) return ParseVariableDeclaration();
+            return ParseStatement();
+        }
+        catch (Error.ParseError)
+        {
+            Synchronize();
+            return null!;
         }
     }
-    
+
+
+    //| varDecl → "var" IDENTIFIER( "=" expression )? ";" ;
+    private Statement ParseVariableDeclaration()
+    {
+        Token name = Consume(TokenType.IDENTIFIER, "Expected variable name.");
+        Expression? initializer = null;
+        if (Match(TokenType.EQUAL))
+        {
+            initializer = ParseExpression();
+        }
+        Consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.");
+        return new Statement.VariableDeclarationStatement(name, initializer);
+    }
+
     //| statement → exprStmt | printStmt | printLineStmt ;
     Statement ParseStatement()
     {
@@ -275,4 +289,37 @@ internal class Parser
     private bool IsAtEnd() => Peek().type == TokenType.EOF;
     private Token Peek() => tokens[current];
     private Token Previous() => tokens[current - 1];
+
+    //| Error handling
+    public Error.ParseError ParseError(Token token, string message)
+    {
+        Error.Report(token.line, message);
+        return new Error.ParseError(token, message);
+    }
+
+    //| Error handling
+    private void Synchronize()
+    {
+        Advance();
+
+        while (!IsAtEnd())
+        {
+            if (Previous().type == TokenType.SEMICOLON) return;
+
+            switch (Peek().type)
+            {
+                case TokenType.CLASS:
+                case TokenType.FUN:
+                case TokenType.VAR:
+                case TokenType.FOR:
+                case TokenType.IF:
+                case TokenType.WHILE:
+                case TokenType.PRINT:
+                case TokenType.RETURN:
+                    return;
+            }
+
+            Advance();
+        }
+    }
 }
