@@ -4,12 +4,22 @@ public class Source
 {
     public static readonly string source =
     """
-    (
-        // this is a comment
-        1 + 2 * 3 - 4 / 5
-    )
+    // this is a comment
+    printLine "Hello world";
+    printLine (1 + 2 * 3 - 4 / 5);
+    printLine "one" + " " + "two";
+    printLine 1 < 2;
     """;
 
+    /*
+    
+    Outputs:
+        >> Hello world
+        >> 6.2
+        >> one two
+        >> True
+    
+    */
 
 
 

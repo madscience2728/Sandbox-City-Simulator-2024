@@ -2,14 +2,16 @@ using CSLox.Scanning;
 
 namespace CSLox.Parsing;
 
-internal class Interpreter : Expression.IVisitor<object>
+internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVisitStatements<object>
 {
-    public void Interpret(Expression expression)
+    public void Interpret(List<Statement> statements)
     {
         try
         {
-            object value = Evaluate(expression);
-            Console.WriteLine(Stringify(value));
+            foreach (Statement statement in statements)
+            {
+                Execute(statement);
+            }
         }
         catch (Error.BaseException error)
         {
@@ -17,22 +19,42 @@ internal class Interpreter : Expression.IVisitor<object>
         }
     }
 
-    private string Stringify(object o)
+    public void Interpret(Expression expression)
     {
-        if (o == null) return "nil";
-
-        if (o is double) {
-            string text = o.ToString()!;
-            if (text.EndsWith(".0"))
-            {
-                text = Program.Substring(text, 0, text.Length - 2);
-            }
-            return text;
+        try
+        {
+            object value = Evaluate(expression);
         }
-
-        return o.ToString()!;
+        catch (Error.BaseException error)
+        {
+            Error.Report(error);
+        }
     }
 
+    //| IVisitStatements<object>
+    public object VisitPrintStatement(Statement.PrintStatement statement)
+    {
+        object value = Evaluate(statement.expression);
+        Console.Write(Program.Stringify(value));
+        return null!;
+    }
+
+    //| IVisitStatements<object>
+    public object VisitPrintLineStatement(Statement.PrintLineStatement statement)
+    {
+        object value = Evaluate(statement.expression);
+        Console.WriteLine(Program.Stringify(value));
+        return null!;
+    }
+
+    //| IVisitStatements<object>
+    public object VisitExpressionStatement(Statement.ExpressionStatement statement)
+    {
+        Evaluate(statement.expression);
+        return null!;
+    } 
+    
+    //| IVisitExpressions<object>
     public object VisitBinaryExpression(Expression.Binary expression)
     {
         object left = Evaluate(expression.left);
@@ -73,16 +95,19 @@ internal class Interpreter : Expression.IVisitor<object>
         throw new Error.UnreachableCodeWasReachedError();
     }
 
+    //| IVisitExpressions<object>
     public object VisitGroupingExpression(Expression.Grouping expression)
     {
         return Evaluate(expression.expression);
     }
 
+    //| IVisitExpressions<object>
     public object VisitLiteralExpression(Expression.Literal expression)
     {
         return expression.value;
     }
 
+    //| IVisitExpressions<object>
     public object VisitUnaryExpression(Expression.Unary expression)
     {
         object right = Evaluate(expression.right);
@@ -100,7 +125,9 @@ internal class Interpreter : Expression.IVisitor<object>
         throw new Error.UnreachableCodeWasReachedError();
     }
 
-    //| HELPER
+
+    //| HELPERS
+    private void Execute(Statement statement) => statement.Accept(this);
     private object Evaluate(Expression expression) => expression.Accept(this);
 
     //| HELPER
@@ -131,6 +158,6 @@ internal class Interpreter : Expression.IVisitor<object>
         if (right == null) return false;
         if (right is bool boolean) return boolean;
         if (right is double number) return number != 0.0;
-        return true;
+        return false;
     }
 }

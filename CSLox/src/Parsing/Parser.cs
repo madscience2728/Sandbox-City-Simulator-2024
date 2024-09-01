@@ -5,9 +5,10 @@ using CSLox.Scanning;
 /*
 
 program        → statement* EOF ;
-statement      → exprStmt | printStmt ;
+statement      → exprStmt | printStmt | printLineStmt ;
 exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
+printLineStmt  → "printLine" expression ";" ;
 
 expression     → equality ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
@@ -86,12 +87,13 @@ internal class Parser
         }
     }
     
-    //| statement → exprStmt | printStmt ;
+    //| statement → exprStmt | printStmt | printLineStmt ;
     Statement ParseStatement()
     {
         try
         {
             if (Match(TokenType.PRINT)) return ParsePrintStatement();
+            if (Match(TokenType.PRINTLINE)) return ParsePrintLineStatement();
             return ParseExpressionStatement();
         }
         catch (Error.ParseError)
@@ -101,23 +103,30 @@ internal class Parser
         }
     }
 
-    //| exprStmt → expression ";" ;
-    Statement ParseExpressionStatement()
-    {
-        Expression expression = ParseExpression();
-        Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
-        return new Statement().Expression(expression);
-    }
-
     //| printStmt → "print" expression ";" ;
     Statement ParsePrintStatement()
     { 
         Expression expression = ParseExpression();
         Consume(TokenType.SEMICOLON, "Expected ';' after value.");
-        return new Statement().Print(expression);
+        return new Statement.PrintStatement(expression);
     }
     
+    //| printLineStmt → "printLine" expression ";" ;
+    Statement ParsePrintLineStatement()
+    {
+        Expression expression = ParseExpression();
+        Consume(TokenType.SEMICOLON, "Expected ';' after value.");
+        return new Statement.PrintLineStatement(expression);
+    }
 
+    //| exprStmt → expression ";" ;
+    Statement ParseExpressionStatement()
+    {
+        Expression expression = ParseExpression();
+        Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new Statement.ExpressionStatement(expression);
+    }
+    
     //| expression → equality ;
     private Expression ParseExpression()
     {

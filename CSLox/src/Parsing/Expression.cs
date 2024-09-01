@@ -3,7 +3,7 @@ using CSLox.Scanning;
 
 internal abstract class Expression
 {
-    public interface IVisitor<T>
+    public interface IVisitExpressions<T>
     {
         T VisitBinaryExpression(Binary expr);
         T VisitGroupingExpression(Grouping expr);
@@ -11,7 +11,7 @@ internal abstract class Expression
         T VisitUnaryExpression(Unary expr);
     }
     
-    public abstract T Accept<T>(IVisitor<T> visitor);
+    public abstract T Accept<T>(IVisitExpressions<T> visitor);
     
     public class Binary : Expression
     {
@@ -26,7 +26,7 @@ internal abstract class Expression
             this.right = right;
         }
         
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IVisitExpressions<T> visitor)
         {
             return visitor.VisitBinaryExpression(this);
         }
@@ -41,7 +41,7 @@ internal abstract class Expression
             this.expression = expression;
         }
         
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IVisitExpressions<T> visitor)
         {
             return visitor.VisitGroupingExpression(this);
         }
@@ -56,7 +56,7 @@ internal abstract class Expression
             this.value = value!;
         }
         
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IVisitExpressions<T> visitor)
         {
             return visitor.VisitLiteralExpression(this);
         }
@@ -73,7 +73,7 @@ internal abstract class Expression
             this.right = right;
         }
         
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IVisitExpressions<T> visitor)
         {
             return visitor.VisitUnaryExpression(this);
         }

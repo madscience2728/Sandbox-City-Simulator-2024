@@ -1,6 +1,6 @@
 namespace CSLox.Parsing;
 
-internal class AstPrinter : Expression.IVisitor<string>
+internal class AstPrinter : Expression.IVisitExpressions<string>
 {
     public string VisitBinaryExpression(Expression.Binary expression)
     {

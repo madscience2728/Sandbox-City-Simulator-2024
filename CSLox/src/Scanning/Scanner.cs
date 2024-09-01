@@ -15,6 +15,7 @@ internal class Scanner
         { "nil", TokenType.NIL },
         { "or", TokenType.OR },
         { "print", TokenType.PRINT },
+        { "printLine", TokenType.PRINTLINE },
         { "return", TokenType.RETURN },
         { "super", TokenType.SUPER },
         { "this", TokenType.THIS },

@@ -16,14 +16,42 @@ class Program
     {
         Console.WriteLine(DateTime.Now);
 
-        TestInterpreter(Source.source);
+        TestInterpreterParse(Source.source);
+        //TestInterpreterSingle(Source.source);
         //TestParser(Source.source);
         // TestScanner(Source.source);
         // TestAstPrinter();
     }
-    
+
     //| TESTER
-    static void TestInterpreter(string source)
+    static void TestInterpreterParse(string source)
+    {
+        Console.WriteLine("[                                      ]");
+        Console.WriteLine("[    <<<    INTERPRETER TEST    >>>    ]");
+        Console.WriteLine("[                                      ]");
+        Console.WriteLine();
+
+        Error.Reset();
+        //
+        Scanner scanner = new Scanner(source);
+        List<Token> tokens = scanner.ScanTokens();
+        //
+        Parser parser = new Parser(tokens);
+        List<Statement> statements = parser.Parse();
+
+        if (Error.hadError)
+        {
+            Console.WriteLine("Error parsing.");
+        }
+        else
+        {
+            Interpreter interpreter = new Interpreter();
+            interpreter.Interpret(statements);
+        }
+    }
+
+    //| TESTER
+    static void TestInterpreterSingle(string source)
     {
         Console.WriteLine("[                                      ]");
         Console.WriteLine("[    <<<    INTERPRETER TEST    >>>    ]");
@@ -122,5 +150,23 @@ class Program
     public static string Substring(string source, int start, int end)
     {
         return source.Substring(start, end - start);
+    }
+
+    //| HELPER
+    public static string Stringify(object o)
+    {
+        if (o == null) return "nil";
+
+        if (o is double)
+        {
+            string text = o.ToString()!;
+            if (text.EndsWith(".0"))
+            {
+                text = Substring(text, 0, text.Length - 2);
+            }
+            return text;
+        }
+
+        return o.ToString()!;
     }
 }
