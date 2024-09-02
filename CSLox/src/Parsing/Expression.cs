@@ -1,5 +1,4 @@
-namespace CSLox.Parsing;
-using CSLox.Scanning;
+namespace CSLox;
 
 internal abstract class Expression
 {

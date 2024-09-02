@@ -1,6 +1,4 @@
-namespace CSLox.Parsing;
-
-using CSLox.Scanning;
+namespace CSLox;
 
 /*
 

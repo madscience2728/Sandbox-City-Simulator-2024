@@ -1,5 +1,5 @@
 
-namespace CSLox.Scanning;
+namespace CSLox;
 
 internal class Scanner
 {

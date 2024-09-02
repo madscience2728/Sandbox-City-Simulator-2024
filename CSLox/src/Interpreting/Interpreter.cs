@@ -1,6 +1,4 @@
-using CSLox.Scanning;
-
-namespace CSLox.Parsing;
+namespace CSLox;
 
 internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVisitStatements<object>
 {

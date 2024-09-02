@@ -1,4 +1,4 @@
-namespace CSLox.Scanning;
+namespace CSLox;
 
 internal class Token
 {

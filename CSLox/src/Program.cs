@@ -1,8 +1,5 @@
 ﻿namespace CSLox;
 
-using CSLox.Parsing;
-using CSLox.Scanning;
-
 /*
 
 

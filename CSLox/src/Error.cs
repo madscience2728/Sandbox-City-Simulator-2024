@@ -1,13 +1,11 @@
 namespace CSLox;
 
-using CSLox.Scanning;
-
 internal class Error
 {
     public abstract class BaseException : Exception
     {
         public BaseException() : base() { }
-        public BaseException(Scanning.Token token, string message) : base(message) { }
+        public BaseException(Token token, string message) : base(message) { }
     }
 
     public class ParseError : BaseException
@@ -24,7 +22,7 @@ internal class Error
     {
         public Token token;
 
-        public RuntimeError(Scanning.Token token, string message) : base(token, message)
+        public RuntimeError(Token token, string message) : base(token, message)
         {
             this.token = token;
         }

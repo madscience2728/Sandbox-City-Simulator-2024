@@ -1,8 +1,5 @@
 namespace CSLox;
 
-using CSLox.Parsing;
-using CSLox.Scanning;
-
 // Statements change state... or they produce output.
 internal abstract class Statement
 {
