@@ -13,6 +13,7 @@ internal abstract class Statement
         T VisitVariableDeclarationStatement(VariableDeclarationStatement stmt);
         T VisitBlockStatement(BlockStatement stmt);
         T VisitIfStatement(IfStatement stmt);
+        T VisitWhileStatement(WhileStatement stmt);
     }
 
     public class PrintStatement : Statement
@@ -109,6 +110,23 @@ internal abstract class Statement
         public override T Accept<T>(IVisitStatements<T> visitor)
         {
             return visitor.VisitIfStatement(this);
+        }
+    }
+    
+    public class WhileStatement : Statement
+    {
+        public Expression condition;
+        public Statement body;
+        
+        public WhileStatement(Expression condition, Statement body)
+        {
+            this.condition = condition;
+            this.body = body;
+        }
+        
+        public override T Accept<T>(IVisitStatements<T> visitor)
+        {
+            return visitor.VisitWhileStatement(this);
         }
     }
 }

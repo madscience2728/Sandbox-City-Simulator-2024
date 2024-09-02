@@ -5,6 +5,7 @@ public class Source
 
     public static readonly string source =
 
+
     """
     // this is a comment
     printLine "Hello world";
@@ -61,6 +62,9 @@ public class Source
       printLine "true";
     } else {
       printLine "false";
+    }
+    while(1 == 1) {
+      printLine "a";
     }
     """;
 

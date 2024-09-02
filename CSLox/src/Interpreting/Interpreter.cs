@@ -78,6 +78,16 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         return null!;
     }
     
+    //| IVisitStatements<object>
+    public object VisitWhileStatement(Statement.WhileStatement statement)
+    {
+        while (IsTruthy(Evaluate(statement.condition)))
+        {
+            Execute(statement.body);
+        }
+        return null!;
+    }
+    
     //* I VISIT EXPRESSIONS
     
     //| IVisitExpressions<object>

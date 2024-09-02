@@ -6,13 +6,14 @@ program        → declaration* EOF ;
 
 declaration    → varDecl | statement ;
 varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
-statement      → exprStmt | printStmt | printLineStmt | block | ifStmt ;
+statement      → exprStmt | printStmt | printLineStmt | block | ifStmt | whileStmt ;
 
 exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
 printLineStmt  → "printLine" expression ";" ;
 block          → "{" declaration* "}" ;
 ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
+whileStmt      → "while" "(" expression ")" statement ;
 
 expression     → assignment ;
 assignment     → IDENTIFIER "=" assignment | logic_or ;
@@ -79,7 +80,7 @@ internal class Parser
         return new Statement.VariableDeclarationStatement(name, initializer);
     }
 
-    //| statement → exprStmt | printStmt | printLineStmt ;
+    //| statement → exprStmt | printStmt | printLineStmt | block | ifStmt | whileStmt ;
     Statement ParseStatement()
     {
         try
@@ -88,6 +89,7 @@ internal class Parser
             if (Match(TokenType.PRINTLINE)) return ParsePrintLineStatement();
             if (Match(TokenType.LEFT_BRACE)) return new Statement.BlockStatement(ParseBlock());
             if (Match(TokenType.IF)) return ParseIfStatement();
+            if (Match(TokenType.WHILE)) return ParseWhileStatement();
             return ParseExpressionStatement();
         }
         catch (Error.ParseError)
@@ -126,7 +128,6 @@ internal class Parser
     }
     
     //| ifStmt → "if" "(" expression ")" statement ( "else" statement )? ;
-    
     private Statement ParseIfStatement()
     {
         Consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.");
@@ -143,6 +144,18 @@ internal class Parser
         
         return new Statement.IfStatement(condition, thenBranch, elseBranch);
     }    
+    
+    //| whileStmt → "while" "(" expression ")" statement ;
+    private Statement ParseWhileStatement()
+    {
+        Consume(TokenType.LEFT_PAREN, "Expected '(' after 'while'.");
+        Expression condition = ParseExpression();
+        Consume(TokenType.RIGHT_PAREN, "Expected ')' after while condition.");
+        
+        Statement body = ParseStatement();
+        
+        return new Statement.WhileStatement(condition, body);
+    }
         
     //| exprStmt → expression ";" ;
     Statement ParseExpressionStatement()
