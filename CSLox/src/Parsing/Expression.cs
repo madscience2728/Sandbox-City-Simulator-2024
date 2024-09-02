@@ -9,6 +9,7 @@ internal abstract class Expression
         T VisitLiteralExpression(Literal expr);
         T VisitUnaryExpression(Unary expr);
         T VisitVariableExpression(Variable expr);
+        T VisitAssignExpression(Assign expr);
     }
     
     public abstract T Accept<T>(IVisitExpressions<T> visitor);
@@ -91,6 +92,23 @@ internal abstract class Expression
         public override T Accept<T>(IVisitExpressions<T> visitor)
         {
             return visitor.VisitVariableExpression(this);
+        }
+    }
+    
+    public class Assign : Expression
+    {
+        public Token name { get; private set; }
+        public Expression value { get; private set; }
+
+        public Assign(Token name, Expression value)
+        {
+            this.name = name;
+            this.value = value;
+        }
+        
+        public override T Accept<T>(IVisitExpressions<T> visitor)
+        {
+            return visitor.VisitAssignExpression(this);
         }
     }
 }

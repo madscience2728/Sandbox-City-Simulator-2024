@@ -13,7 +13,9 @@ exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
 printLineStmt  → "printLine" expression ";" ;
 
-expression     → equality ;
+expression     → assignment ;
+assignment     → IDENTIFIER "=" assignment | equality ;
+
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
@@ -44,31 +46,6 @@ internal class Parser
 
         return statements;
     }
-
-#region indev
-    public List<Statement> ParseStatements()
-    {
-        List<Statement> statements = new List<Statement>();
-        while (!IsAtEnd())
-        {
-            statements.Add(ParseStatement());
-        }
-
-        return statements;
-    }
-
-    public Expression? ParseSingleExpression()
-    {
-        try
-        {
-            return ParseExpression();
-        }
-        catch (Error.ParseError)
-        {
-            return null;
-        }
-    }
-#endregion
 
     //| declaration → varDecl | statement ;
     private Statement ParseDeclaration()
@@ -139,11 +116,33 @@ internal class Parser
         return new Statement.ExpressionStatement(expression);
     }
     
-    //| expression → equality ;
+    //| expression → assignment ;
     private Expression ParseExpression()
     {
-        return ParseEquality();
+        return ParseAssign();
     }
+
+    //| assignment → IDENTIFIER "=" assignment | equality ;
+    private Expression ParseAssign()
+    {
+        Expression expression = ParseEquality();
+        
+        if (Match(TokenType.EQUAL))
+        {
+            Token equals = Previous();
+            Expression value = ParseAssign();
+            
+            if (expression is Expression.Variable variable)
+            {
+                Token name = variable.name;
+                return new Expression.Assign(name, value);
+            }
+            
+            ParseError(equals, "Invalid assignment target.");
+        }
+        
+        return expression;
+    }    
 
     //| equality → comparison(( "!=" | "==" ) comparison )* ;
     private Expression ParseEquality()
@@ -228,6 +227,11 @@ internal class Parser
         if (Match(TokenType.NUMBER, TokenType.STRING))
         {
             return new Expression.Literal(Previous().literal);
+        }
+
+        if (Match(TokenType.IDENTIFIER))
+        {
+            return new Expression.Variable(Previous());
         }
 
         if (Match(TokenType.LEFT_PAREN))

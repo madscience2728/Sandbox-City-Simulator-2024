@@ -2,6 +2,8 @@ namespace CSLox;
 
 internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVisitStatements<object>
 {
+    private LoxEnvironment environment = new LoxEnvironment();
+    
     public void Interpret(List<Statement> statements)
     {
         try
@@ -16,6 +18,8 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
             Error.Report(error);
         }
     }
+    
+    //* I VISIT STATEMENTS
 
     //| IVisitStatements<object>
     public object VisitPrintStatement(Statement.PrintStatement statement)
@@ -43,8 +47,17 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
     //| IVisitStatements<object>
     public object VisitVariableDeclarationStatement(Statement.VariableDeclarationStatement statement)
     {
-        throw new NotImplementedException();
+        object? value = null;
+        if (statement.initializer != null)
+        {
+            value = Evaluate(statement.initializer);
+        }
+        
+        environment.Define(statement.name.lexeme, value);
+        return null!;
     }
+    
+    //* I VISIT EXPRESSIONS
     
     //| IVisitExpressions<object>
     public object VisitBinaryExpression(Expression.Binary expression)
@@ -120,8 +133,18 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
     //| IVisitExpressions<object>
     public object VisitVariableExpression(Expression.Variable expression)
     {
-        throw new NotImplementedException();
+        return environment.Get(expression.name)!;
     }
+
+    //| IVisitExpressions<object>
+    public object VisitAssignExpression(Expression.Assign expression)
+    {
+        object value = Evaluate(expression.value);
+        environment.Assign(expression.name, value);
+        return value;
+    }
+    
+    //* HELPERS
 
     //| HELPERS
     private void Execute(Statement statement) => statement.Accept(this);

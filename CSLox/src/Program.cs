@@ -36,7 +36,7 @@ class Program
         List<Token> tokens = scanner.ScanTokens();
         //
         Parser parser = new Parser(tokens);
-        List<Statement> statements = parser.ParseStatements();
+        List<Statement> statements = parser.Parse();
 
         if (Error.hadError)
         {
