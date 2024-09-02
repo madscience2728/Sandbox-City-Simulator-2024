@@ -5,17 +5,20 @@ namespace CSLox;
 program        → declaration* EOF ;
 
 declaration    → varDecl | statement ;
-
 varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+statement      → exprStmt | printStmt | printLineStmt | block | ifStmt ;
 
-statement      → exprStmt | printStmt | printLineStmt ;
 exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
 printLineStmt  → "printLine" expression ";" ;
+block          → "{" declaration* "}" ;
+ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
 
 expression     → assignment ;
-assignment     → IDENTIFIER "=" assignment | equality ;
+assignment     → IDENTIFIER "=" assignment | logic_or ;
 
+logic_or       → logic_and ( "or" logic_and )* ;
+logic_and      → equality ( "and" equality )* ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
@@ -83,6 +86,8 @@ internal class Parser
         {
             if (Match(TokenType.PRINT)) return ParsePrintStatement();
             if (Match(TokenType.PRINTLINE)) return ParsePrintLineStatement();
+            if (Match(TokenType.LEFT_BRACE)) return new Statement.BlockStatement(ParseBlock());
+            if (Match(TokenType.IF)) return ParseIfStatement();
             return ParseExpressionStatement();
         }
         catch (Error.ParseError)
@@ -107,7 +112,38 @@ internal class Parser
         Consume(TokenType.SEMICOLON, "Expected ';' after value.");
         return new Statement.PrintLineStatement(expression);
     }
-
+    
+    //| block → "{" declaration* "}" ;
+    private List<Statement> ParseBlock()
+    {
+        List<Statement> statements = new List<Statement>();
+        while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+        {
+            statements.Add(ParseDeclaration());
+        }
+        Consume(TokenType.RIGHT_BRACE, "Expected '}' after block.");
+        return statements;
+    }
+    
+    //| ifStmt → "if" "(" expression ")" statement ( "else" statement )? ;
+    
+    private Statement ParseIfStatement()
+    {
+        Consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.");
+        Expression condition = ParseExpression();
+        Consume(TokenType.RIGHT_PAREN, "Expected ')' after if condition.");
+        
+        Statement thenBranch = ParseStatement();
+        Statement? elseBranch = null;
+        
+        if (Match(TokenType.ELSE))
+        {
+            elseBranch = ParseStatement();
+        }
+        
+        return new Statement.IfStatement(condition, thenBranch, elseBranch);
+    }    
+        
     //| exprStmt → expression ";" ;
     Statement ParseExpressionStatement()
     {
@@ -122,10 +158,10 @@ internal class Parser
         return ParseAssign();
     }
 
-    //| assignment → IDENTIFIER "=" assignment | equality ;
+    //| assignment → IDENTIFIER "=" assignment | logic_or ;
     private Expression ParseAssign()
     {
-        Expression expression = ParseEquality();
+        Expression expression = ParseOr();
         
         if (Match(TokenType.EQUAL))
         {
@@ -143,6 +179,36 @@ internal class Parser
         
         return expression;
     }    
+    
+    //| logic_or → logic_and( "or" logic_and )* ;
+    private Expression ParseOr()
+    {
+        Expression expression = ParseAnd();
+        
+        while (Match(TokenType.OR))
+        {
+            Token op = Previous();
+            Expression right = ParseAnd();
+            expression = new Expression.Logic(expression, op, right);
+        }
+        
+        return expression;
+    }
+    
+    //| logic_and → equality( "and" equality )* ;
+    private Expression ParseAnd()
+    {
+        Expression expression = ParseEquality();
+        
+        while (Match(TokenType.AND))
+        {
+            Token op = Previous();
+            Expression right = ParseEquality();
+            expression = new Expression.Logic(expression, op, right);
+        }
+        
+        return expression;
+    }
 
     //| equality → comparison(( "!=" | "==" ) comparison )* ;
     private Expression ParseEquality()

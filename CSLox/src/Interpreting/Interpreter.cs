@@ -57,6 +57,27 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         return null!;
     }
     
+    //| IVisitStatements<object>
+    public object VisitBlockStatement(Statement.BlockStatement statement)
+    {
+        ExecuteBlock(statement.statements, new LoxEnvironment(environment));
+        return null!;
+    }
+    
+    //| IVisitStatements<object>
+    public object VisitIfStatement(Statement.IfStatement statement)
+    {
+        if (IsTruthy(Evaluate(statement.condition)))
+        {
+            Execute(statement.thenBranch);
+        }
+        else if (statement.elseBranch != null)
+        {
+            Execute(statement.elseBranch);
+        }
+        return null!;
+    }
+    
     //* I VISIT EXPRESSIONS
     
     //| IVisitExpressions<object>
@@ -144,11 +165,44 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         return value;
     }
     
+    //| IVisitExpressions<object>
+    public object VisitLogicExpression(Expression.Logic expression)
+    {
+        object left = Evaluate(expression.left);
+        if (expression.operatorToken.type == TokenType.OR)
+        {
+            if (IsTruthy(left)) return left;
+        }
+        else
+        {
+            if (!IsTruthy(left)) return left;
+        }
+        return Evaluate(expression.right);
+    }
+    
     //* HELPERS
 
     //| HELPERS
     private void Execute(Statement statement) => statement.Accept(this);
     private object Evaluate(Expression expression) => expression.Accept(this);
+    
+    //| HELPER
+    private void ExecuteBlock(List<Statement> statements, LoxEnvironment environment)
+    {
+        LoxEnvironment previous = this.environment;
+        try
+        {
+            this.environment = environment;
+            foreach (Statement statement in statements)
+            {
+                Execute(statement);
+            }
+        }
+        finally
+        {
+            this.environment = previous;
+        }
+    }
 
     //| HELPER
     private void CheckNumberOperands(Token operatorToken, object left, object right)

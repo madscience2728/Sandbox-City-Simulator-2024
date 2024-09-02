@@ -21,6 +21,47 @@ public class Source
     a = 1;
     printLine a; // "1".
     printLine a = 2; // "2".
+    var a = "global a";
+    var b = "global b";
+    var c = "global c";
+    {
+      var a = "outer a";
+      var b = "outer b";
+      {
+        var a = "inner a";
+        printLine a;
+        printLine b;
+        printLine c;
+      }
+      printLine "";
+      printLine a;
+      printLine b;
+      printLine c;
+    }
+    printLine "";
+    printLine a;
+    printLine b;
+    printLine c;
+    if(1 == 1) {
+      printLine "true";
+    } else {
+      printLine "false";
+    }
+    if(1 == 2) {
+      printLine "true";
+    } else {
+      printLine "false";
+    }
+    if(1 == 2 or 1 == 1) {
+      printLine "true";
+    } else {
+      printLine "false";
+    }
+    if(1 == 2 and 1 == 1) {
+      printLine "true";
+    } else {
+      printLine "false";
+    }
     """;
 
     /*

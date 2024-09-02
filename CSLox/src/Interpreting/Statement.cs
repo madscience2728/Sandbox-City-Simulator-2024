@@ -11,6 +11,8 @@ internal abstract class Statement
         T VisitPrintLineStatement(PrintLineStatement stmt);
         T VisitExpressionStatement(ExpressionStatement stmt);
         T VisitVariableDeclarationStatement(VariableDeclarationStatement stmt);
+        T VisitBlockStatement(BlockStatement stmt);
+        T VisitIfStatement(IfStatement stmt);
     }
 
     public class PrintStatement : Statement
@@ -73,6 +75,40 @@ internal abstract class Statement
         public override T Accept<T>(IVisitStatements<T> visitor)
         {
             return visitor.VisitVariableDeclarationStatement(this);
+        }
+    }
+    
+    public class BlockStatement : Statement
+    {
+        public List<Statement> statements;
+        
+        public BlockStatement(List<Statement> statements)
+        {
+            this.statements = statements;
+        }
+        
+        public override T Accept<T>(IVisitStatements<T> visitor)
+        {
+            return visitor.VisitBlockStatement(this);
+        }
+    }
+    
+    public class IfStatement : Statement
+    {
+        public Expression condition;
+        public Statement thenBranch;
+        public Statement? elseBranch;
+        
+        public IfStatement(Expression condition, Statement thenBranch, Statement? elseBranch)
+        {
+            this.condition = condition;
+            this.thenBranch = thenBranch;
+            this.elseBranch = elseBranch;
+        }
+        
+        public override T Accept<T>(IVisitStatements<T> visitor)
+        {
+            return visitor.VisitIfStatement(this);
         }
     }
 }
