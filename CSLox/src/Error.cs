@@ -2,23 +2,23 @@ namespace CSLox;
 
 internal class Error
 {
-    public abstract class BaseException : Exception
+    public abstract class StatementError : Exception
     {
-        public BaseException() : base() { }
-        public BaseException(Token token, string message) : base(message) { }
+        public StatementError() : base() { }
+        public StatementError(Token token, string message) : base(message) { }
     }
 
-    public class ParseError : BaseException
+    public class ParseError : StatementError
     {
         public ParseError(Token token, string message) : base(token, message) { }
     }
     
-    public class UnreachableCodeWasReachedError : BaseException
+    public class UnreachableCodeWasReachedError : StatementError
     {
         public UnreachableCodeWasReachedError() : base() { }
     }
     
-    public class RuntimeError : BaseException
+    public class RuntimeError : StatementError
     {
         public Token token;
 
@@ -35,7 +35,7 @@ internal class Error
         hadError = false;
     }
     
-    public static void Report(BaseException error)
+    public static void Report(StatementError error)
     {
         hadError = true;
         if (error is RuntimeError runtimeError)

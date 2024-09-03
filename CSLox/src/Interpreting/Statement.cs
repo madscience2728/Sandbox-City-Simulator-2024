@@ -15,6 +15,7 @@ internal abstract class Statement
         T VisitIfStatement(IfStatement stmt);
         T VisitWhileStatement(WhileStatement stmt);
         T VisitFunctionStatement(FunctionStatement stmt);
+        T VisitReturnStatement(ReturnStatement stmt);
     }
 
     public class PrintStatement : Statement
@@ -147,6 +148,23 @@ internal abstract class Statement
         public override T Accept<T>(IVisitStatements<T> visitor)
         {
             return visitor.VisitFunctionStatement(this);
+        }
+    }
+    
+    public class ReturnStatement : Statement
+    {
+        public Token keyword;
+        public Expression? value;
+        
+        public ReturnStatement(Token keyword, Expression? value)
+        {
+            this.keyword = keyword;
+            this.value = value;
+        }
+        
+        public override T Accept<T>(IVisitStatements<T> visitor)
+        {
+            return visitor.VisitReturnStatement(this);
         }
     }
 }

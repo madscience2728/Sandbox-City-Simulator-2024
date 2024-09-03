@@ -109,6 +109,37 @@ public class Source
       pizza();
     }
     sayHi("Dear", "Reader");
+    
+    fun count(n) {
+      while (n < 100) {
+        if (n == 3) return n; // <--
+        print n;
+        n = n + 1;
+      }
+    }
+    count(1);
+    
+    fun fib(n) {
+      if(n <= 1) return n;
+      return fib(n - 1) + fib(n - 2);
+    }
+    
+    for (var i = 0; i < 20; i = i + 1) {
+      printLine fib(i);
+    }
+   
+    fun makeCounter() {
+      var i = 0;
+      fun count() {
+        i = i + 1;
+        printLine i;
+      }
+      return count;
+    }
+
+    var counter = makeCounter();
+    counter(); // "1".
+    counter(); // "2".
    
     """;
 

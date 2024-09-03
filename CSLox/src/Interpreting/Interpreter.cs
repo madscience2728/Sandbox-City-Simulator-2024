@@ -2,6 +2,8 @@ namespace CSLox;
 
 internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVisitStatements<object>
 {
+    
+    
     public LoxEnvironment globals { get; private set; }
     public LoxEnvironment environment { get; private set; }
 
@@ -20,7 +22,7 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
                 Execute(statement);
             }
         }
-        catch (Error.BaseException error)
+        catch (Error.StatementError error)
         {
             Error.Report(error);
         }
@@ -99,9 +101,17 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
 
     public object VisitFunctionStatement(Statement.FunctionStatement statement)
     {
-        LoxFunction function = new LoxFunction(statement);
+        LoxFunction function = new LoxFunction(statement, environment);
         environment.Define(statement.name.lexeme, function);
         return null!;
+    }
+
+    //| IVisitStatements<object>
+    public object VisitReturnStatement(Statement.ReturnStatement statement)
+    {
+        object value = null!;
+        if (statement.value != null) value = Evaluate(statement.value);
+        throw new Return(value);
     }
 
     //* I VISIT EXPRESSIONS
@@ -230,7 +240,7 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
             throw new Error.RuntimeError(expression.paren, $"Expected {function.Arity()} arguments but got {arguments.Count}.");
         }
 
-        return function.Call(this, arguments);
+        return function.Call(this, arguments)!;
     }
 
     //* NATIVE FUNCTIONS
