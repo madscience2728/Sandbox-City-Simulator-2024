@@ -63,9 +63,53 @@ public class Source
     } else {
       printLine "false";
     }
-    while(1 == 1) {
-      printLine "a";
+    // while(1 == 1) {
+    //  printLine "a";
+    // }
+    
+    a = 0;
+    b = 1;
+    c = -20;
+    
+    
+    var temp;
+    while (a < 89) {
+      printLine a;
+      temp = a;
+      a = b;
+      b = temp + b;
     }
+    
+    
+    printLine a + c;
+    
+    a = 0;
+    b = 1;
+    
+    for (var b = 1; a < 89; b = temp + b) {
+      printLine a;
+      temp = a;
+      a = b;
+    }
+    printLine a + c; 
+    
+    printLine "done " + 0;
+    
+    var p = 3;
+    
+    fun pizza() {
+      printLine "pizza";
+      p = p - 1;
+      if(p > 0) pizza();
+    }
+    pizza();
+    
+    fun sayHi(first, last) {
+      printLine "Hi, " + first + " " + last + "!";
+      pizza();
+    }
+    sayHi("Dear", "Reader");
+   
     """;
 
     /*

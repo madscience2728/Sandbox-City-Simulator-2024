@@ -2,8 +2,15 @@ namespace CSLox;
 
 internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVisitStatements<object>
 {
-    private LoxEnvironment environment = new LoxEnvironment();
-    
+    public LoxEnvironment globals { get; private set; }
+    public LoxEnvironment environment { get; private set; }
+
+    public Interpreter()
+    {
+        environment = globals = new LoxEnvironment();
+        globals.Define("clock", new ClockFunction());
+    }
+
     public void Interpret(List<Statement> statements)
     {
         try
@@ -18,7 +25,7 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
             Error.Report(error);
         }
     }
-    
+
     //* I VISIT STATEMENTS
 
     //| IVisitStatements<object>
@@ -42,8 +49,8 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
     {
         Evaluate(statement.expression);
         return null!;
-    } 
-    
+    }
+
     //| IVisitStatements<object>
     public object VisitVariableDeclarationStatement(Statement.VariableDeclarationStatement statement)
     {
@@ -52,18 +59,18 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         {
             value = Evaluate(statement.initializer);
         }
-        
+
         environment.Define(statement.name.lexeme, value);
         return null!;
     }
-    
+
     //| IVisitStatements<object>
     public object VisitBlockStatement(Statement.BlockStatement statement)
     {
         ExecuteBlock(statement.statements, new LoxEnvironment(environment));
         return null!;
     }
-    
+
     //| IVisitStatements<object>
     public object VisitIfStatement(Statement.IfStatement statement)
     {
@@ -77,7 +84,7 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         }
         return null!;
     }
-    
+
     //| IVisitStatements<object>
     public object VisitWhileStatement(Statement.WhileStatement statement)
     {
@@ -87,9 +94,18 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         }
         return null!;
     }
-    
+
+    //| IVisitStatements<object>
+
+    public object VisitFunctionStatement(Statement.FunctionStatement statement)
+    {
+        LoxFunction function = new LoxFunction(statement);
+        environment.Define(statement.name.lexeme, function);
+        return null!;
+    }
+
     //* I VISIT EXPRESSIONS
-    
+
     //| IVisitExpressions<object>
     public object VisitBinaryExpression(Expression.Binary expression)
     {
@@ -122,6 +138,8 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
             case TokenType.PLUS:
                 if (left is double && right is double) return (double)left + (double)right;
                 if (left is string && right is string) return (string)left + (string)right;
+                if (left is string && right is double) return (string)left + Program.Stringify(right);
+                if (left is double && right is string) return Program.Stringify(left) + (string)right;
                 throw new Error.RuntimeError(expression.operatorToken, "Operands must be two numbers or two strings.");
             case TokenType.BANG_EQUAL: return !IsEqual(left, right);
             case TokenType.EQUAL_EQUAL: return IsEqual(left, right);
@@ -174,7 +192,7 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         environment.Assign(expression.name, value);
         return value;
     }
-    
+
     //| IVisitExpressions<object>
     public object VisitLogicExpression(Expression.Logic expression)
     {
@@ -189,15 +207,55 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         }
         return Evaluate(expression.right);
     }
-    
+
+    //| IVisitExpressions<object>
+    public object VisitCallExpression(Expression.Call expression)
+    {
+        object callee = Evaluate(expression.callee);
+        List<object> arguments = new List<object>();
+        foreach (Expression argument in expression.arguments)
+        {
+            arguments.Add(Evaluate(argument));
+        }
+
+        if (callee is not ICallLoxFunctions)
+        {
+            throw new Error.RuntimeError(expression.paren, "Can only call functions and classes.");
+        }
+
+        ICallLoxFunctions function = (ICallLoxFunctions)callee;
+
+        if (arguments.Count != function.Arity())
+        {
+            throw new Error.RuntimeError(expression.paren, $"Expected {function.Arity()} arguments but got {arguments.Count}.");
+        }
+
+        return function.Call(this, arguments);
+    }
+
+    //* NATIVE FUNCTIONS
+
+    public class ClockFunction : ICallLoxFunctions
+    {
+        public int Arity() => 0;
+
+        public object Call(Interpreter interpreter, List<object> arguments)
+        {
+            throw new NotImplementedException();
+            //return (double)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0;
+        }
+
+        //public override string ToString() => "<native fn>";
+    }
+
     //* HELPERS
 
     //| HELPERS
-    private void Execute(Statement statement) => statement.Accept(this);
-    private object Evaluate(Expression expression) => expression.Accept(this);
-    
+    public void Execute(Statement statement) => statement.Accept(this);
+    public object Evaluate(Expression expression) => expression.Accept(this);
+
     //| HELPER
-    private void ExecuteBlock(List<Statement> statements, LoxEnvironment environment)
+    public void ExecuteBlock(List<Statement> statements, LoxEnvironment environment)
     {
         LoxEnvironment previous = this.environment;
         try
@@ -215,29 +273,29 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
     }
 
     //| HELPER
-    private void CheckNumberOperands(Token operatorToken, object left, object right)
+    public void CheckNumberOperands(Token operatorToken, object left, object right)
     {
         if (left is double && right is double) return;
         throw new Error.RuntimeError(operatorToken, "Operands must be numbers.");
     }
 
     //| HELPER
-    private void CheckNumberOperand(Token operatorToken, object operand)
+    public void CheckNumberOperand(Token operatorToken, object operand)
     {
         if (operand is double) return;
         throw new Error.RuntimeError(operatorToken, "Operand must be a number.");
     }
 
     //| HELPER
-    private bool IsEqual(object left, object right)
+    public bool IsEqual(object left, object right)
     {
         if (left == null && right == null) return true;
         if (left == null) return false;
         return left.Equals(right);
-    }    
+    }
 
     //| HELPER
-    private bool IsTruthy(object right)
+    public bool IsTruthy(object right)
     {
         if (right == null) return false;
         if (right is bool boolean) return boolean;

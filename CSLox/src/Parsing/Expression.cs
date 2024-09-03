@@ -11,6 +11,7 @@ internal abstract class Expression
         T VisitVariableExpression(Variable expr);
         T VisitAssignExpression(Assign expr);
         T VisitLogicExpression(Logic expr);
+        T VisitCallExpression(Call expr);
     }
     
     public abstract T Accept<T>(IVisitExpressions<T> visitor);
@@ -129,6 +130,25 @@ internal abstract class Expression
         public override T Accept<T>(IVisitExpressions<T> visitor)
         {
             return visitor.VisitLogicExpression(this);
+        }
+    }
+    
+    public class Call : Expression
+    {
+        public Expression callee { get; private set; }
+        public Token paren { get; private set; }
+        public List<Expression> arguments { get; private set; }
+
+        public Call(Expression callee, Token paren, List<Expression> arguments)
+        {
+            this.callee = callee;
+            this.paren = paren;
+            this.arguments = arguments;
+        }
+        
+        public override T Accept<T>(IVisitExpressions<T> visitor)
+        {
+            return visitor.VisitCallExpression(this);
         }
     }
 }

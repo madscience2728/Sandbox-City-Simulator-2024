@@ -40,7 +40,8 @@ internal class Error
         hadError = true;
         if (error is RuntimeError runtimeError)
         {
-            Console.Error.WriteLine($"[line {((RuntimeError)runtimeError).token.line}]: {runtimeError.Message}");
+            Token token = runtimeError.token;
+            Console.Error.WriteLine($"[line {token.line}][token {token.lexeme}]: {runtimeError.Message}");
         }
         else Console.Error.WriteLine(error.Message);
     }

@@ -1,6 +1,7 @@
 
 namespace CSLox;
 
+// A dictionary with scope.
 internal class LoxEnvironment
 {
     private Dictionary<string, object?> values = new Dictionary<string, object?>();
