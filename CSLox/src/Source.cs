@@ -141,6 +141,30 @@ public class Source
     counter(); // "1".
     counter(); // "2".
    
+   
+    var a = "global";
+    if(true)
+    {
+      fun showA() {
+        printLine a;
+      }
+    
+      showA();
+      var a = "block";
+      showA();
+      // a = a;
+    }
+    printLine a;
+    
+    printLine "";
+    
+    a = "global";
+    if(true)
+    {
+      a = "block";
+      a = a;
+    }
+    printLine a;
     """;
 
     /*

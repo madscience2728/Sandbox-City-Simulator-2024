@@ -2,30 +2,34 @@ namespace CSLox;
 
 internal class Error
 {
-    public abstract class StatementError : Exception
+    public abstract class BaseError : Exception
     {
-        public StatementError() : base() { }
-        public StatementError(Token token, string message) : base(message) { }
+        public Token? token = null;
+        public BaseError() : base() { }
+        public BaseError(Token token, string message) : base(message) { }
     }
 
-    public class ParseError : StatementError
+    public class ParseError : BaseError
     {
         public ParseError(Token token, string message) : base(token, message) { }
     }
     
-    public class UnreachableCodeWasReachedError : StatementError
+    public class UnreachableCodeWasReachedError : BaseError
     {
         public UnreachableCodeWasReachedError() : base() { }
     }
     
-    public class RuntimeError : StatementError
+    public class RuntimeError : BaseError
     {
-        public Token token;
-
         public RuntimeError(Token token, string message) : base(token, message)
         {
             this.token = token;
         }
+    }
+    
+    public class CompileError : BaseError
+    {
+        public CompileError(Token token, string message) : base(token, message) { }
     }
 
     public static bool hadError = false;
@@ -35,13 +39,15 @@ internal class Error
         hadError = false;
     }
     
-    public static void Report(StatementError error)
+    public static void Report(BaseError error)
     {
         hadError = true;
-        if (error is RuntimeError runtimeError)
+        if (error.token != null)
         {
-            Token token = runtimeError.token;
-            Console.Error.WriteLine($"[line {token.line}][token {token.lexeme}]: {runtimeError.Message}");
+            Token token = error.token;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.WriteLine($"[line {token.line} at token '{token.lexeme}']: {error.Message}");
+            Console.ResetColor();
         }
         else Console.Error.WriteLine(error.Message);
     }

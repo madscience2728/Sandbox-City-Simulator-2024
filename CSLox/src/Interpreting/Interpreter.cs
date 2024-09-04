@@ -2,10 +2,10 @@ namespace CSLox;
 
 internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVisitStatements<object>
 {
-    
+    public LoxEnvironment environment { get; private set; }
     
     public LoxEnvironment globals { get; private set; }
-    public LoxEnvironment environment { get; private set; }
+    public Dictionary<Expression, int> locals = new Dictionary<Expression, int>();
 
     public Interpreter()
     {
@@ -22,7 +22,7 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
                 Execute(statement);
             }
         }
-        catch (Error.StatementError error)
+        catch (Error.BaseError error)
         {
             Error.Report(error);
         }
@@ -311,5 +311,10 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         if (right is bool boolean) return boolean;
         if (right is double number) return number != 0.0;
         return false;
+    }
+
+    public void Resolve(Expression expr, int depth)
+    {
+        locals.Add(expr, depth);
     }
 }

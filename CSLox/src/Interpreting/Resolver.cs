@@ -1,0 +1,200 @@
+namespace CSLox;
+
+internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisitStatements<object>
+{
+    Interpreter interpreter;
+    Stack<Dictionary<string, bool>> scopes;
+
+    public Resolver(Interpreter interpreter)
+    {
+        this.interpreter = interpreter;
+        scopes = new Stack<Dictionary<string, bool>>();
+    }
+
+    public object VisitAssignExpression(Expression.Assign expr)
+    {
+        Resolve(expr.value);
+        ResolveLocal(expr, expr.name);
+        return null!;
+    }
+
+    public object VisitBinaryExpression(Expression.Binary expr)
+    {
+        Resolve(expr.left);
+        Resolve(expr.right);
+        return null!;
+    }
+
+    public object VisitCallExpression(Expression.Call expr)
+    {
+        Resolve(expr.callee);
+
+        foreach (Expression argument in expr.arguments)
+        {
+            Resolve(argument);
+        }
+        return null!;
+    }
+
+    public object VisitGroupingExpression(Expression.Grouping expr)
+    {
+        Resolve(expr.expression);
+        return null!;
+    }
+
+    public object VisitLiteralExpression(Expression.Literal expr)
+    {
+        return null!;
+    }
+
+    public object VisitLogicExpression(Expression.Logic expr)
+    {
+        Resolve(expr.left);
+        Resolve(expr.right);
+        return null!;
+    }
+
+    public object VisitUnaryExpression(Expression.Unary expr)
+    {
+        Resolve(expr.right);
+        return null!;
+    }
+
+    public object VisitVariableExpression(Expression.Variable expr)
+    {
+        if (scopes.Count() > 0 && scopes.Peek()[expr.name.lexeme] == false)
+        {
+            Error.Report(new Error.CompileError(expr.name, $"Can't read local variable in its own initializer."));
+        }
+
+        ResolveLocal(expr, expr.name);
+        return null!;
+    }
+
+    public object VisitBlockStatement(Statement.BlockStatement stmt)
+    {
+        BeginScope();
+        Resolve(stmt.statements);
+        EndScope();
+        return null!;
+    }
+
+    public object VisitExpressionStatement(Statement.ExpressionStatement stmt)
+    {
+        Resolve(stmt.expression);
+        return null!;
+    }
+
+    public object VisitFunctionStatement(Statement.FunctionStatement stmt)
+    {
+        Declare(stmt.name);
+        Define(stmt.name);
+
+        ResolveFunction(stmt);
+        return null!;
+    }
+
+    public object VisitIfStatement(Statement.IfStatement stmt)
+    {
+        Resolve(stmt.condition);
+        Resolve(stmt.thenBranch);
+        if (stmt.elseBranch != null) Resolve(stmt.elseBranch);
+        return null!;
+    }
+
+    public object VisitPrintLineStatement(Statement.PrintLineStatement stmt)
+    {
+        return null!;
+    }
+
+    public object VisitPrintStatement(Statement.PrintStatement stmt)
+    {
+        Resolve(stmt.expression);
+        return null!;
+    }
+
+    public object VisitReturnStatement(Statement.ReturnStatement stmt)
+    {
+        if (stmt.value != null)
+        {
+            Resolve(stmt.value);
+        }
+
+        return null!;
+    }
+
+    public object VisitVariableDeclarationStatement(Statement.VariableDeclarationStatement stmt)
+    {
+        Declare(stmt.name);
+        if (stmt.initializer != null)
+        {
+            Resolve(stmt.initializer);
+        }
+        Define(stmt.name);
+        return null!;
+    }
+
+    public object VisitWhileStatement(Statement.WhileStatement stmt)
+    {
+        Resolve(stmt.condition);
+        Resolve(stmt.body);
+        return null!;
+    }
+
+    //| Helper
+    private void ResolveFunction(Statement.FunctionStatement function)
+    {
+        BeginScope();
+        foreach (Token param in function.parameters)
+        {
+            Declare(param);
+            Define(param);
+        }
+        Resolve(function.body);
+        EndScope();
+    }
+
+    //| Helper
+    private void ResolveLocal(Expression expr, Token name)
+    {
+        for (int i = scopes.Count() - 1; i >= 0; i--)
+        {
+            if (scopes.ElementAt(i).ContainsKey(name.lexeme))
+            {
+                interpreter.Resolve(expr, scopes.Count() - 1 - i);
+                return;
+            }
+        }
+    }
+
+    //| Helper
+    private void Declare(Token name)
+    {
+        if (scopes.Count() == 0) return;
+
+        Dictionary<string, bool> scope = scopes.Peek();
+        scope.Add(name.lexeme, false);
+    }
+    
+    //| Helper
+    private void Define(Token name)
+    {
+        if (scopes.Count() == 0) return;
+        scopes.Peek()[name.lexeme] = true;
+    }
+
+    //| Helper
+    void Resolve(List<Statement> statements)
+    {
+        foreach (Statement statement in statements)
+        {
+            Resolve(statement);
+        }
+    }
+
+    //| Helpers
+    void Resolve(Statement statement) => statement.Accept(this);
+    void Resolve(Expression expression) => expression.Accept(this);
+    void BeginScope() => scopes.Push(new Dictionary<string, bool>());
+    void EndScope() => scopes.Pop(); 
+}
