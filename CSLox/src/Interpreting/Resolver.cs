@@ -11,6 +11,16 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         scopes = new Stack<Dictionary<string, bool>>();
     }
 
+    public void Resolve(List<Statement> statements)
+    {
+        foreach (Statement statement in statements)
+        {
+            Resolve(statement);
+        }
+    }
+
+    //* Expressions
+
     public object VisitAssignExpression(Expression.Assign expr)
     {
         Resolve(expr.value);
@@ -70,6 +80,8 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         ResolveLocal(expr, expr.name);
         return null!;
     }
+    
+    //* Statements
 
     public object VisitBlockStatement(Statement.BlockStatement stmt)
     {
@@ -142,6 +154,28 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
     }
 
     //| Helper
+    private void Declare(Token name)
+    {
+        if (scopes.Count() == 0) return;
+
+        Dictionary<string, bool> scope = scopes.Peek();
+        
+        if (scope.ContainsKey(name.lexeme))
+        {
+            Error.Report(new Error.CompileError(name, $"Variable with name '{name.lexeme}' already declared in this scope."));
+        }
+        
+        scope.Add(name.lexeme, false);
+    }
+    
+    //| Helper
+    private void Define(Token name)
+    {
+        if (scopes.Count() == 0) return;
+        scopes.Peek()[name.lexeme] = true;
+    }
+
+    //| Helper
     private void ResolveFunction(Statement.FunctionStatement function)
     {
         BeginScope();
@@ -164,31 +198,6 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
                 interpreter.Resolve(expr, scopes.Count() - 1 - i);
                 return;
             }
-        }
-    }
-
-    //| Helper
-    private void Declare(Token name)
-    {
-        if (scopes.Count() == 0) return;
-
-        Dictionary<string, bool> scope = scopes.Peek();
-        scope.Add(name.lexeme, false);
-    }
-    
-    //| Helper
-    private void Define(Token name)
-    {
-        if (scopes.Count() == 0) return;
-        scopes.Peek()[name.lexeme] = true;
-    }
-
-    //| Helper
-    void Resolve(List<Statement> statements)
-    {
-        foreach (Statement statement in statements)
-        {
-            Resolve(statement);
         }
     }
 

@@ -4,6 +4,36 @@ public class Source
 {
 
     public static readonly string source =
+    """
+    // this is a comment
+    printLine "Hello world";
+    var a = 10;
+    var b = 1;
+    printLine a + b;
+    
+    fun bad()
+    {
+      a = 20;
+      printLine a + b;
+      
+      var a = 30; // ignored
+      printLine a + b; 
+      
+      return 41;
+    }
+    var c = bad();
+    printLine c;
+    
+    fun test()
+    {
+      var romeo = "Romeo";
+      var juliet = "Juliet";
+      romeo = "Montague";
+      printLine romeo + " " + juliet;
+    }
+    """;
+
+    public static readonly string sourceOld =
 
 
     """

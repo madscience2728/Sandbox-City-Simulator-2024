@@ -28,6 +28,11 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         }
     }
 
+    public void Resolve(Expression expr, int depth)
+    {
+        locals.Add(expr, depth);
+    }
+
     //* I VISIT STATEMENTS
 
     //| IVisitStatements<object>
@@ -192,14 +197,22 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
     //| IVisitExpressions<object>
     public object VisitVariableExpression(Expression.Variable expression)
     {
-        return environment.Get(expression.name)!;
+        //return environment.Get(expression.name)!;
+        return LookUpVariable(expression.name, expression);
     }
 
     //| IVisitExpressions<object>
     public object VisitAssignExpression(Expression.Assign expression)
     {
         object value = Evaluate(expression.value);
-        environment.Assign(expression.name, value);
+        //environment.Assign(expression.name, value);
+        
+        if (locals.TryGetValue(expression, out int distance))
+            environment.AssignAt(distance, expression.name, value);
+        else 
+            globals.Assign(expression.name, value);
+        
+        
         return value;
     }
 
@@ -313,8 +326,16 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         return false;
     }
 
-    public void Resolve(Expression expr, int depth)
+    //| HELPER
+    public object LookUpVariable(Token name, Expression expression)
     {
-        locals.Add(expr, depth);
+        if (locals.TryGetValue(expression, out int distance))
+        {
+            return environment.GetAt(distance, name.lexeme);
+        }
+        else
+        {
+            return globals.Get(name)!;
+        }
     }
 }

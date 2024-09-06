@@ -1,4 +1,6 @@
 
+
+
 namespace CSLox;
 
 // A dictionary with scope.
@@ -31,7 +33,7 @@ internal class LoxEnvironment
 
         if (enclosing != null) return enclosing.Get(name);
 
-        throw new Error.RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+        throw new Error.RuntimeError(name, "Tried to get an undefined variable '" + name.lexeme + "'.");
     }
 
     public void Assign(Token name, object value)
@@ -48,6 +50,27 @@ internal class LoxEnvironment
             return;
         }
 
-        throw new Error.RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+        throw new Error.RuntimeError(name, "Tried to assign an undefined variable '" + name.lexeme + "'.");
+    }
+
+    public object GetAt(int distance, string lexeme)
+    {
+        return Ancestor(distance).values[lexeme]!;
+    }
+
+    LoxEnvironment Ancestor(int distance)
+    {
+        LoxEnvironment environment = this;
+        for (int i = 0; i < distance; i++)
+        {
+            environment = environment.enclosing!;
+        }
+
+        return environment;
+    }
+
+    internal void AssignAt(int distance, Token name, object value)
+    {
+        Ancestor(distance).values[name.lexeme] = value;
     }
 }

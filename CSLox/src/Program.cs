@@ -2,13 +2,25 @@
 
 /*
 
+//! THIS SOURCE WILL RETURN 21 TWICE
+var b = 1;
+fun bad()
+{
+  a = 20;
+  printLine a + b;
+  
+  var a = 30;
+  printLine a + b; 
+}
 
-source → SCANNER → tokens → PARSER → expressions → INTERPRETER → output
+source → SCANNER → tokens → PARSER → statements → RESOLVER → INTERPRETER → output
 
 */
 
 class Program
 {
+    static Interpreter interpreter = new Interpreter();
+
     static void Main(string[] args)
     {
         Run(Source.source);
@@ -37,6 +49,9 @@ class Program
         //
         Parser parser = new Parser(tokens);
         List<Statement> statements = parser.Parse();
+        //
+        Resolver resolver = new Resolver(interpreter);
+        resolver.Resolve(statements);
 
         if (Error.hadError)
         {
@@ -44,7 +59,6 @@ class Program
         }
         else
         {
-            Interpreter interpreter = new Interpreter();
             interpreter.Interpret(statements);
         }
     }
