@@ -6,7 +6,9 @@ internal class Error
     {
         public Token? token = null;
         public BaseError() : base() { }
-        public BaseError(Token token, string message) : base(message) { }
+        public BaseError(Token token, string message) : base(message) { 
+            this.token = token;
+        }
     }
 
     public class ParseError : BaseError

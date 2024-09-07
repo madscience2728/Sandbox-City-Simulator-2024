@@ -2,8 +2,15 @@ namespace CSLox;
 
 internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisitStatements<object>
 {
+    private enum FunctionType
+    {
+        NONE,
+        FUNCTION
+    }
+    
     Interpreter interpreter;
     Stack<Dictionary<string, bool>> scopes;
+    private FunctionType currentFunction = FunctionType.NONE;
 
     public Resolver(Interpreter interpreter)
     {
@@ -102,7 +109,7 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         Declare(stmt.name);
         Define(stmt.name);
 
-        ResolveFunction(stmt);
+        ResolveFunction(stmt, FunctionType.FUNCTION);
         return null!;
     }
 
@@ -127,6 +134,11 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
 
     public object VisitReturnStatement(Statement.ReturnStatement stmt)
     {
+        if (currentFunction == FunctionType.NONE)
+        {
+            Error.Report(new Error.CompileError(stmt.keyword, "Can't return from top-level code. Is a return statement outside of a function?"));
+        }
+
         if (stmt.value != null)
         {
             Resolve(stmt.value);
@@ -176,8 +188,11 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
     }
 
     //| Helper
-    private void ResolveFunction(Statement.FunctionStatement function)
+    private void ResolveFunction(Statement.FunctionStatement function, FunctionType functionType)
     {
+        FunctionType enclosingFunction = currentFunction;
+        currentFunction = functionType;
+        
         BeginScope();
         foreach (Token param in function.parameters)
         {
@@ -186,6 +201,8 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         }
         Resolve(function.body);
         EndScope();
+
+        currentFunction = enclosingFunction;
     }
 
     //| Helper
