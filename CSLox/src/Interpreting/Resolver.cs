@@ -88,6 +88,19 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         return null!;
     }
     
+    public object VisitGetExpression(Expression.Get expr)
+    {
+        Resolve(expr.obj);
+        return null!;
+    }
+    
+    public object VisitSetExpression(Expression.Set expr)
+    {
+        Resolve(expr.value);
+        Resolve(expr.obj);
+        return null!;
+    }
+    
     //* Statements
 
     public object VisitBlockStatement(Statement.BlockStatement stmt)
@@ -162,6 +175,13 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
     {
         Resolve(stmt.condition);
         Resolve(stmt.body);
+        return null!;
+    }
+
+    public object VisitClassStatement(Statement.ClassStatement stmt)
+    {
+        Declare(stmt.name);
+        Define(stmt.name);
         return null!;
     }
 

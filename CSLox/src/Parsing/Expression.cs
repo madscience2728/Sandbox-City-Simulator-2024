@@ -12,6 +12,8 @@ internal abstract class Expression
         T VisitAssignExpression(Assign expr);
         T VisitLogicExpression(Logic expr);
         T VisitCallExpression(Call expr);
+        T VisitGetExpression(Get expr);
+        T VisitSetExpression(Set expr);
     }
     
     public abstract T Accept<T>(IVisitExpressions<T> visitor);
@@ -149,6 +151,42 @@ internal abstract class Expression
         public override T Accept<T>(IVisitExpressions<T> visitor)
         {
             return visitor.VisitCallExpression(this);
+        }
+    }
+    
+    public class Get : Expression
+    {
+        public Expression obj { get; private set; }
+        public Token name { get; private set; }
+
+        public Get(Expression obj, Token name)
+        {
+            this.obj = obj;
+            this.name = name;
+        }
+        
+        public override T Accept<T>(IVisitExpressions<T> visitor)
+        {
+            return visitor.VisitGetExpression(this);
+        }
+    }
+    
+    public class Set : Expression
+    {
+        public Expression obj { get; private set; }
+        public Token name { get; private set; }
+        public Expression value { get; private set; }
+
+        public Set(Expression obj, Token name, Expression value)
+        {
+            this.obj = obj;
+            this.name = name;
+            this.value = value;
+        }
+        
+        public override T Accept<T>(IVisitExpressions<T> visitor)
+        {
+            return visitor.VisitSetExpression(this);
         }
     }
 }

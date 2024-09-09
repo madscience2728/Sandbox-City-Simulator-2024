@@ -4,12 +4,14 @@ namespace CSLox;
 
 program        → declaration* EOF ;
 
-declaration    → funDecl | varDecl | statement ;
+declaration    → funDecl | varDecl | classDecl | statement ;
 varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
 statement      → exprStmt | printStmt | printLineStmt | block | ifStmt | whileStmt | forStmt | returnStmt ;
 
+classDecl      → "class" IDENTIFIER "{" function* "}" ;
 funDecl        → "fun" function ;
 function       → IDENTIFIER "(" parameters? ")" block ;
+parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
 
 exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
@@ -21,7 +23,7 @@ forStmt        → "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expres
 returnStmt     → "return" expression? ";" ;
 
 expression     → assignment ;
-assignment     → IDENTIFIER "=" assignment | logic_or ;
+assignment     → ( call "." )? IDENTIFIER "=" assignment | logic_or ;
 
 logic_or       → logic_and ( "or" logic_and )* ;
 logic_and      → equality ( "and" equality )* ;
@@ -30,7 +32,7 @@ comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
 factor         → unary ( ( "/" | "*" ) unary )* ;
 unary          → ( "!" | "-" ) unary | call ;
-call           → primary ( "(" arguments? ")" )* ;
+call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
 
 */
@@ -62,6 +64,7 @@ internal class Parser
     {
         try
         {
+            if (Match(TokenType.CLASS)) return ParseClassDeclaration();
             if (Match(TokenType.FUN)) return ParseFunctionDeclaration("function");
             if (Match(TokenType.VAR)) return ParseVariableDeclaration();
 
@@ -73,7 +76,24 @@ internal class Parser
             return null!;
         }
     }
+    
+    //| classDecl → "class" IDENTIFIER "{" function* "}" ;
+    private Statement ParseClassDeclaration()
+    {
+        Token name = Consume(TokenType.IDENTIFIER, "Expected class name.");
+        Consume(TokenType.LEFT_BRACE, "Expected '{' before class body.");
 
+        List<Statement> methods = new List<Statement>();
+        while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+        {
+            methods.Add(ParseFunctionDeclaration("method"));
+        }
+
+        Consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.");
+
+        return new Statement.ClassStatement(name, methods.Cast<Statement.FunctionStatement>().ToList());
+    }
+    
     //| funDecl → "fun" IDENTIFIER "(" parameters? ")" block ;
     private Statement ParseFunctionDeclaration(string kind)
     {
@@ -290,6 +310,10 @@ internal class Parser
                 Token name = variable.name;
                 return new Expression.Assign(name, value);
             }
+            else if (expression is Expression.Get get)
+            {
+                return new Expression.Set(get.obj, get.name, value);
+            }
 
             ParseError(equals, "Invalid assignment target.");
         }
@@ -408,6 +432,11 @@ internal class Parser
         while (true)
         {
             if (Match(TokenType.LEFT_PAREN)) expression = FinishCall(expression);
+            else if (Match(TokenType.DOT))
+            {
+                Token name = Consume(TokenType.IDENTIFIER, "A property name is expected after a period. Do you have a stray dot?");
+                expression = new Expression.Get(expression, name);
+            }
             else break;
         }
 

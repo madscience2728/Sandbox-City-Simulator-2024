@@ -119,6 +119,15 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         throw new Return(value);
     }
 
+    //| IVisitStatements<object>
+    public object VisitClassStatement(Statement.ClassStatement statement)
+    {
+        environment.Define(statement.name.lexeme, null);
+        LoxClass myClass = new LoxClass(statement.name.lexeme);
+        environment.Assign(statement.name, myClass);
+        return null!;
+    }
+
     //* I VISIT EXPRESSIONS
 
     //| IVisitExpressions<object>
@@ -255,7 +264,31 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
 
         return function.Call(this, arguments)!;
     }
-
+    
+    //| IVisitExpressions<object>
+    public object VisitGetExpression(Expression.Get expression)
+    {
+        object obj = Evaluate(expression.obj);
+        if (obj is LoxInstance instance)
+        {
+            return instance.Get(expression.name);
+        }
+        throw new Error.RuntimeError(expression.name, "Only instances have properties that you can access. Do you have a stray period? Or perhaps are trying to use a method statically?");
+    }
+    
+    //| IVisitExpressions<object>
+    public object VisitSetExpression(Expression.Set expression)
+    {
+        object obj = Evaluate(expression.obj);
+        if (obj is LoxInstance instance)
+        {
+            object value = Evaluate(expression.value);
+            instance.Set(expression.name, value);
+            return value;
+        }
+        throw new Error.RuntimeError(expression.name, "Only instances have fields that you can set. Do you have a stray period?");
+    }
+    
     //* NATIVE FUNCTIONS
 
     public class ClockFunction : ICallLoxFunctions

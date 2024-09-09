@@ -5,6 +5,9 @@ public class Source
 
     public static readonly string source =
     """
+    
+    
+    
     // this is a comment
     printLine "Hello world";
     var a = 10;
@@ -31,6 +34,13 @@ public class Source
       romeo = "Montague";
       printLine romeo + " " + juliet;
     }
+    
+    class DevonshireCream {
+    }
+    printLine DevonshireCream;
+    var dc = DevonshireCream;
+    
+    
     """;
 
     public static readonly string sourceOld =
