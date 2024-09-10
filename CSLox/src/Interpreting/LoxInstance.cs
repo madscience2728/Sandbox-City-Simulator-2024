@@ -23,6 +23,6 @@ internal class LoxInstance
     
     public override string ToString()
     {
-        return $"{myClass} instance";
+        return $"instance of {myClass}";
     }
 }

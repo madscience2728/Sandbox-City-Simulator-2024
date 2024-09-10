@@ -434,7 +434,7 @@ internal class Parser
             if (Match(TokenType.LEFT_PAREN)) expression = FinishCall(expression);
             else if (Match(TokenType.DOT))
             {
-                Token name = Consume(TokenType.IDENTIFIER, "A property name is expected after a period. Do you have a stray dot?");
+                Token name = Consume(TokenType.IDENTIFIER, "A property name is expected after a '.'. Do you have a stray period?");
                 expression = new Expression.Get(expression, name);
             }
             else break;

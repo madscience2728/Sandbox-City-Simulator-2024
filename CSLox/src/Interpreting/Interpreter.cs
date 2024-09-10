@@ -221,7 +221,6 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         else 
             globals.Assign(expression.name, value);
         
-        
         return value;
     }
 
@@ -280,13 +279,15 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
     public object VisitSetExpression(Expression.Set expression)
     {
         object obj = Evaluate(expression.obj);
+        
         if (obj is LoxInstance instance)
         {
             object value = Evaluate(expression.value);
             instance.Set(expression.name, value);
             return value;
         }
-        throw new Error.RuntimeError(expression.name, "Only instances have fields that you can set. Do you have a stray period?");
+        
+        throw new Error.RuntimeError(expression.name, "Only instances have fields that you can set. Do you have a stray period? Or perhaps are trying to use a field statically?");
     }
     
     //* NATIVE FUNCTIONS

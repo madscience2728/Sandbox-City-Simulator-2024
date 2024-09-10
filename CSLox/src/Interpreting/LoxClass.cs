@@ -24,6 +24,6 @@ internal class LoxClass : ICallLoxFunctions
 
     public override string ToString()
     {
-        return name;
+        return $"{name} class";
     }
 }

@@ -3,7 +3,28 @@ namespace CSLox;
 public class Source
 {
 
-    public static readonly string source =
+  public static readonly string source =
+  """
+  class Bagel {}
+  var b = Bagel();
+  printLine b;
+  
+  class Pisswater {
+    //
+  }
+  
+  var p = Pisswater();
+  p.pizza = 0;
+  
+  printLine Pisswater;
+  printLine p; 
+  printLine p.pizza;
+  
+  
+    
+  """;
+
+    /*public static readonly string source =
     """
     
     
@@ -38,10 +59,12 @@ public class Source
     class DevonshireCream {
     }
     printLine DevonshireCream;
-    var dc = DevonshireCream;
     
+    class Bagel {}
+    var b = Bagel();
+    print bagel; // Prints "Bagel instance".
     
-    """;
+    """;*/
 
     public static readonly string sourceOld =
 

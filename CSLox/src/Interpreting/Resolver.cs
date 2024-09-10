@@ -79,9 +79,25 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
 
     public object VisitVariableExpression(Expression.Variable expr)
     {
-        if (scopes.Count() > 0 && scopes.Peek()[expr.name.lexeme] == false)
+        Dictionary<string, bool> scope = null!;
+
+        if (scopes.Count() > 0)
         {
-            Error.Report(new Error.CompileError(expr.name, $"Can't read local variable in its own initializer."));
+            scope = scopes.Peek();
+
+            if (scope == null)
+            {
+                throw new System.Exception("Scope is null.");
+            }
+
+            if (!scope.ContainsKey(expr.name.lexeme))
+            {
+                Error.Report(new Error.CompileError(expr.name, $"Variable with name '{expr.name.lexeme}' not found."));
+            }
+            else if (scope[expr.name.lexeme] == false)
+            {
+                Error.Report(new Error.CompileError(expr.name, $"Can't read local variable in its own initializer."));
+            }
         }
 
         ResolveLocal(expr, expr.name);
@@ -136,6 +152,7 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
 
     public object VisitPrintLineStatement(Statement.PrintLineStatement stmt)
     {
+        Resolve(stmt.expression);
         return null!;
     }
 
