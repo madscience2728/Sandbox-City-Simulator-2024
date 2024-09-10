@@ -59,7 +59,7 @@ internal class Parser
         return statements;
     }
 
-    //| declaration → funDecl | varDecl | statement ;
+    //| declaration → funDecl | varDecl | statement | classDecl ;
     private Statement ParseDeclaration()
     {
         try
@@ -86,7 +86,7 @@ internal class Parser
         List<Statement> methods = new List<Statement>();
         while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
         {
-            methods.Add(ParseFunctionDeclaration("method"));
+            methods.Add((Statement.FunctionStatement)ParseFunctionDeclaration("method"));
         }
 
         Consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.");
@@ -453,6 +453,11 @@ internal class Parser
         if (Match(TokenType.NUMBER, TokenType.STRING))
         {
             return new Expression.Literal(Previous().literal);
+        }
+        
+        if (Match(TokenType.THIS))
+        {
+            return new Expression.This(Previous());
         }
 
         if (Match(TokenType.IDENTIFIER))

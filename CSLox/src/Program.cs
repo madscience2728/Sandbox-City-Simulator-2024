@@ -46,15 +46,27 @@ class Program
         //
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.ScanTokens();
-        if (Error.hadError) Console.WriteLine("Error scanning.");
+        if (Error.hadError)
+        {
+            Console.WriteLine("Error scanning.");
+            return;
+        }
         //
         Parser parser = new Parser(tokens);
         List<Statement> statements = parser.Parse();
-        if (Error.hadError) Console.WriteLine("Error parsing.");
+        if (Error.hadError) 
+        {
+            Console.WriteLine("Error parsing.");
+            return;
+        }
         //
         Resolver resolver = new Resolver(interpreter);
         resolver.Resolve(statements);
-        if (Error.hadError) Console.WriteLine("Error resolving.");
+        if (Error.hadError) 
+        {
+            Console.WriteLine("Error resolving.");
+            return;
+        }
         
         if(!Error.hadError)
         {

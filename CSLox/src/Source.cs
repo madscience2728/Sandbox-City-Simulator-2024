@@ -16,7 +16,16 @@ public class Source
   }
   
   Bacon().eat(); // Prints "Crunch crunch crunch!".
-    
+  
+  class Egotist {
+    speak() {
+      print this;
+    }
+  }
+
+  var method = Egotist().speak;
+  method();
+  
   """;
 
     /*public static readonly string source =

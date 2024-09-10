@@ -118,6 +118,18 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         return null!;
     }
     
+    public object VisitThisExpression(Expression.This expr)
+    {
+        if (currentFunction == FunctionType.NONE)
+        {
+            Error.Report(new Error.CompileError(expr.keyword, "Can't use 'this' in a top-level statement."));
+            return null!;
+        }
+        
+        ResolveLocal(expr, expr.keyword);
+        return null!;
+    }
+    
     //* Statements
 
     public object VisitBlockStatement(Statement.BlockStatement stmt)
@@ -201,6 +213,9 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         Declare(stmt.name);
         Define(stmt.name);
         
+        BeginScope();
+        scopes.Peek().Add("this", true);
+        
         foreach (Statement.FunctionStatement method in stmt.methods)
         {
             FunctionType declaration = FunctionType.METHOD;
@@ -210,6 +225,8 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
             }*/
             ResolveFunction(method, declaration);
         }
+
+        EndScope();
         
         return null!;
     }
@@ -219,7 +236,7 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
     {
         if (scopes.Count() == 0) return;
 
-        Dictionary<string, bool> scope = scopes.Peek();
+        var scope = scopes.Peek();
         
         if (scope.ContainsKey(name.lexeme))
         {

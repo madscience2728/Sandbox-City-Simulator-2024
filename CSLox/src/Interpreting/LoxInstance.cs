@@ -15,7 +15,7 @@ internal class LoxInstance
         if (fields.ContainsKey(name.lexeme)) return fields[name.lexeme];
 
         LoxFunction? method = myClass.FindMethod(name.lexeme);
-        if (method != null) return method;
+        if (method != null) return method.Bind(this);
 
         throw new Error.RuntimeError(name, $"Can not get property '{name.lexeme}'. It is not defined in {myClass}, as either a field or method. Is this a typo perhaps?");
     }

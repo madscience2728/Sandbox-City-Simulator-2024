@@ -299,6 +299,12 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         throw new Error.RuntimeError(expression.name, "Only instances have fields that you can set. Do you have a stray period? Or perhaps are trying to use a field statically?");
     }
     
+    //| IVisitExpressions<object>
+    public object VisitThisExpression(Expression.This expression)
+    {
+        return LookUpVariable(expression.keyword, expression);
+    }
+    
     //* NATIVE FUNCTIONS
 
     public class ClockFunction : ICallLoxFunctions

@@ -11,6 +11,13 @@ internal class LoxFunction : ICallLoxFunctions
         this.declaration = declaration;
         this.closure = closure;
     }
+    
+    public LoxFunction Bind(LoxInstance instance)
+    {
+        LoxEnvironment environment = new LoxEnvironment(closure);
+        environment.Define("this", instance);
+        return new LoxFunction(declaration, environment);
+    }
 
     public int Arity()
     {
