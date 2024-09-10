@@ -7,11 +7,21 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         NONE,
         FUNCTION,
         METHOD,
+        INITIALIZER
     }
-    
+
+    enum ClassType
+    {
+        NONE,
+        CLASS
+    }
+
+
+    FunctionType currentFunction = FunctionType.NONE;
+    ClassType currentClass = ClassType.NONE;
+
     Interpreter interpreter;
     Stack<Dictionary<string, bool>> scopes;
-    private FunctionType currentFunction = FunctionType.NONE;
 
     public Resolver(Interpreter interpreter)
     {
@@ -120,9 +130,9 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
     
     public object VisitThisExpression(Expression.This expr)
     {
-        if (currentFunction == FunctionType.NONE)
+        if (currentClass == ClassType.NONE)
         {
-            Error.Report(new Error.CompileError(expr.keyword, "Can't use 'this' in a top-level statement."));
+            Error.Report(new Error.CompileError(expr.keyword, "Can't use 'this' in top-level code."));
             return null!;
         }
         
@@ -184,6 +194,10 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
 
         if (stmt.value != null)
         {
+            if (currentFunction == FunctionType.INITIALIZER)
+            {
+                Error.Report(new Error.CompileError(stmt.keyword, "Can't return a value from an initializer."));
+            }
             Resolve(stmt.value);
         }
 
@@ -213,18 +227,23 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
         Declare(stmt.name);
         Define(stmt.name);
         
+        ClassType enclosingClass = currentClass;
+        currentClass = ClassType.CLASS;
+        
         BeginScope();
         scopes.Peek().Add("this", true);
         
         foreach (Statement.FunctionStatement method in stmt.methods)
         {
             FunctionType declaration = FunctionType.METHOD;
-            /*if (method.name.lexeme.Equals("init"))
+            if (method.name.lexeme.Equals(stmt.name.lexeme))
             {
-                declaration = FunctionType.FUNCTION;
-            }*/
+                declaration = FunctionType.INITIALIZER;
+            }
             ResolveFunction(method, declaration);
         }
+        
+        currentClass = enclosingClass;
 
         EndScope();
         

@@ -14,12 +14,21 @@ internal class LoxClass : ICallLoxFunctions
     
     public int Arity()
     {
-        return 0;
+        LoxFunction? initializer = FindMethod(name);
+        if (initializer != null) return initializer.Arity();
+        return 0;   
     }
 
     public object? Call(Interpreter interpreter, List<object> arguments)
     {
         LoxInstance instance = new LoxInstance(this);
+        LoxFunction? initializer = FindMethod(name);
+        
+        if (initializer != null)
+        {
+            initializer.Bind(instance).Call(interpreter, arguments);
+        }
+        
         return instance;
     }
 

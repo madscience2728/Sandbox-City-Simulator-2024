@@ -106,7 +106,7 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
 
     public object VisitFunctionStatement(Statement.FunctionStatement statement)
     {
-        LoxFunction function = new LoxFunction(statement, environment);
+        LoxFunction function = new LoxFunction(statement, environment, false);
         environment.Define(statement.name.lexeme, function);
         return null!;
     }
@@ -128,7 +128,7 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
         
         foreach (Statement.FunctionStatement method in statement.methods)
         {
-            LoxFunction function = new LoxFunction(method, environment);
+            LoxFunction function = new LoxFunction(method, environment, method.name.lexeme == statement.name.lexeme);
             methods[method.name.lexeme] = function;
         }
         

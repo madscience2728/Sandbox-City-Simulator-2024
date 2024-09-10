@@ -11,20 +11,24 @@ public class Source
   
   class Bacon {
     eat() {
-      print "Crunch crunch crunch!";
+      printLine "Crunch crunch crunch!";
     }
   }
   
   Bacon().eat(); // Prints "Crunch crunch crunch!".
   
   class Egotist {
-    speak() {
-      print this;
+    Egotist() {
+      this.pizza = 0;
+      
+      
+      printLine "I'm the only one!";
+    }
+    Egotist2() {
+      printLine "I'm the only two!";
     }
   }
-
-  var method = Egotist().speak;
-  method();
+  Egotist().Egotist2();
   
   """;
 
