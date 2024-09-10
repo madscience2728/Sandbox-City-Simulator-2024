@@ -9,11 +9,15 @@ internal class LoxInstance
     {
         this.myClass = myClass;
     }
-    
+
     public object Get(Token name)
     {
         if (fields.ContainsKey(name.lexeme)) return fields[name.lexeme];
-        throw new Error.RuntimeError(name, $"Can not get property '{name.lexeme}'. It is not defined in {myClass}.");
+
+        LoxFunction? method = myClass.FindMethod(name.lexeme);
+        if (method != null) return method;
+
+        throw new Error.RuntimeError(name, $"Can not get property '{name.lexeme}'. It is not defined in {myClass}, as either a field or method. Is this a typo perhaps?");
     }
     
     public void Set(Token name, object value)

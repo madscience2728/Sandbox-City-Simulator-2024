@@ -9,18 +9,13 @@ public class Source
   var b = Bagel();
   printLine b;
   
-  class Pisswater {
-    //
+  class Bacon {
+    eat() {
+      print "Crunch crunch crunch!";
+    }
   }
   
-  var p = Pisswater();
-  p.pizza = 0;
-  
-  printLine Pisswater;
-  printLine p; 
-  printLine p.pizza;
-  
-  
+  Bacon().eat(); // Prints "Crunch crunch crunch!".
     
   """;
 

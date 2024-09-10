@@ -123,7 +123,16 @@ internal class Interpreter : Expression.IVisitExpressions<object>, Statement.IVi
     public object VisitClassStatement(Statement.ClassStatement statement)
     {
         environment.Define(statement.name.lexeme, null);
-        LoxClass myClass = new LoxClass(statement.name.lexeme);
+        
+        Dictionary<string, LoxFunction> methods = new();
+        
+        foreach (Statement.FunctionStatement method in statement.methods)
+        {
+            LoxFunction function = new LoxFunction(method, environment);
+            methods[method.name.lexeme] = function;
+        }
+        
+        LoxClass myClass = new LoxClass(statement.name.lexeme, methods);
         environment.Assign(statement.name, myClass);
         return null!;
     }

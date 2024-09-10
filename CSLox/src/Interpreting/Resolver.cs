@@ -5,7 +5,8 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
     private enum FunctionType
     {
         NONE,
-        FUNCTION
+        FUNCTION,
+        METHOD,
     }
     
     Interpreter interpreter;
@@ -199,6 +200,17 @@ internal class Resolver : Expression.IVisitExpressions<object>, Statement.IVisit
     {
         Declare(stmt.name);
         Define(stmt.name);
+        
+        foreach (Statement.FunctionStatement method in stmt.methods)
+        {
+            FunctionType declaration = FunctionType.METHOD;
+            /*if (method.name.lexeme.Equals("init"))
+            {
+                declaration = FunctionType.FUNCTION;
+            }*/
+            ResolveFunction(method, declaration);
+        }
+        
         return null!;
     }
 
